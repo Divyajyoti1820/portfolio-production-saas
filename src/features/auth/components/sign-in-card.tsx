@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
+import { useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { signIn } from "next-auth/react";
 
@@ -21,9 +22,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export const SignInCard = () => {
+  const params = useSearchParams();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("Something went wrong");
+  const error = params.get("errors");
 
   /* Credentials Sign-In */
   const CredentialsHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -38,7 +41,7 @@ export const SignInCard = () => {
 
   /* OAuth Sign-in */
   const OAuthHandler = () => {
-    signIn("github");
+    signIn("github", { redirectTo: "/" });
   };
   /* OAuth Sign-in */
 
@@ -52,15 +55,15 @@ export const SignInCard = () => {
       </CardHeader>
 
       <CardContent className="space-y-5">
-        {true && (
+        {!!error && (
           <div className="h-5 flex items-center justify-center gap-x-2 py-5 bg-destructive rounded-lg text-sm">
             <AlertTriangleIcon className="size-5" />
-            <p>{error}</p>
+            <p>Something went wrong</p>
           </div>
         )}
-        <div className="flex flex-col border py-3 gap-y-2 items-center justify-center text-xs">
-          <p>Test Email : test.user@testmail.com</p>
-          <p>Test Password : Test@1234TE </p>
+        <div className="flex flex-col bg-black border py-3 gap-y-2 items-center justify-center text-sm rounded-md">
+          <p>Test email : test.user@testmail.com</p>
+          <p>Test password : Test@1234TE </p>
         </div>
         <form onSubmit={CredentialsHandler} className="space-y-3">
           <Input
