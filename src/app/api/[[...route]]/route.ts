@@ -5,11 +5,12 @@ export const runtime = "nodejs";
 
 /* Major Project API Routes */
 import users from "./users";
+import board from "./board";
 /* Major Project API Routes */
 
 const app = new Hono().basePath("/api");
 
-const routes = app.route("/users", users);
+const routes = app.route("/users", users).route("/board", board);
 
 export const GET = handle(app);
 export const POST = handle(app);

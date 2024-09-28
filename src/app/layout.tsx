@@ -6,6 +6,7 @@ import { Providers } from "@/components/providers/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { Modals } from "@/components/modals";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -29,6 +30,7 @@ export default async function RootLayout({
       <html lang="en">
         <body className={font.className}>
           <Providers>
+            <Modals />
             <Toaster />
             {children}
           </Providers>
