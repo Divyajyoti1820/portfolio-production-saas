@@ -15,6 +15,20 @@
       "when": 1727542306214,
       "tag": "0001_high_scarecrow",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1727700935222,
+      "tag": "0002_cloudy_dark_beast",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1727702414330,
+      "tag": "0003_omniscient_banshee",
+      "breakpoints": true
     }
   ]
 }

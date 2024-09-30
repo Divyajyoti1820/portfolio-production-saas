@@ -1,16 +1,28 @@
-import { Hono } from "hono";
+import { Context, Hono } from "hono";
 import { handle } from "hono/vercel";
 
-export const runtime = "nodejs";
+import { AuthConfig, initAuthConfig } from "@hono/auth-js";
+import authConfig from "@/auth.config";
 
 /* Major Project API Routes */
 import users from "./users";
-import board from "./board";
+import boards from "./boards";
 /* Major Project API Routes */
+
+export const runtime = "nodejs";
+
+const getAuthConfig = (c: Context): AuthConfig => {
+  return {
+    secret: c.env.AUTH_SECRET,
+    ...authConfig,
+  };
+};
 
 const app = new Hono().basePath("/api");
 
-const routes = app.route("/users", users).route("/board", board);
+app.use("*", initAuthConfig(getAuthConfig));
+
+const routes = app.route("/users", users).route("/boards", boards);
 
 export const GET = handle(app);
 export const POST = handle(app);

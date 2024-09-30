@@ -87,12 +87,13 @@ export const authenticators = pgTable(
   })
 );
 
-export const board = pgTable("board", {
+export const boards = pgTable("boards", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => crypto.randomUUID()),
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  columns: text("columns").array().notNull(),
+  title: text("title").notNull(),
+  columns: text("columns").array().notNull().unique(),
 });
