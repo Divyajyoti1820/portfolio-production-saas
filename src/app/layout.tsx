@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 import { Providers } from "@/components/providers/providers";
+import { JotaiProvider } from "@/components/providers/jotai-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
@@ -29,11 +30,13 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={font.className}>
-          <Providers>
-            <Modals />
-            <Toaster />
-            {children}
-          </Providers>
+          <JotaiProvider>
+            <Providers>
+              <Modals />
+              <Toaster />
+              {children}
+            </Providers>
+          </JotaiProvider>
         </body>
       </html>
     </SessionProvider>

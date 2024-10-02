@@ -1,22 +1,37 @@
-import { auth } from "@/auth";
+"use client";
+
+import { useSession } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { UserButton } from "@/features/auth/components/user-button";
 import { ArrowRightIcon, SidebarIcon } from "lucide-react";
 import Image from "next/image";
+import { useCreateBoardModal } from "@/features/boards/hooks/use-create-board-modal";
+import { useGetBoards } from "@/features/boards/api/use-get-boards";
+import { format } from "date-fns";
+import { useRouter } from "next/navigation";
 
-const Home = async () => {
-  const session = await auth();
+const Home = () => {
+  const router = useRouter();
+  const { data: session } = useSession();
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_openCreateBoardModal, setOpenCreateBoardModal] =
+    useCreateBoardModal();
+
+  const { data: boardsData } = useGetBoards();
+
+  const redirectBoardHandler = () => {
+    if (!boardsData) {
+      return null;
+    }
+
+    router.push(`/board/${boardsData[0].id}`);
+  };
 
   /* Creating Date */
-  const today = new Date();
-  const instance = {
-    day: today.getDate(),
-    month: today.getMonth(),
-    year: today.getFullYear(),
-    hours: today.getHours(),
-    mins: today.getMinutes(),
-  };
+  const today = format(new Date(), "EEEE,dd MMM yyyy | HH:mm bb | OOOO");
+
   /* Creating Date */
 
   return (
@@ -39,7 +54,7 @@ const Home = async () => {
       <div className="w-full h-full lg:w-1/2 flex flex-col items-center">
         <nav className="px-3 py-2  w-full flex items-center justify-between  border-b border-slate-700">
           <p className="text-lg font-medium">{session?.user?.name}</p>
-          <p className="text-sm text-muted-foreground">{`${instance.day}/${instance.month}/${instance.year} ${instance.hours}:${instance.mins}`}</p>
+          <p className="text-xs text-muted-foreground">{today}</p>
           <UserButton />
         </nav>
         <div className="flex-1 w-full flex flex-col gap-y-6 items-center justify-center h-full">
@@ -52,19 +67,23 @@ const Home = async () => {
             interactive approach to help you stay organized and productive.
           </p>
 
-          <div className="flex items-center justify-center gapy-6"></div>
+          {boardsData?.length === 0 && (
+            <Button
+              disabled={boardsData?.length !== 0}
+              onClick={() => setOpenCreateBoardModal(true)}
+              className="flex w-[420px] items-center justify-center gap-x-3"
+              size="lg"
+            >
+              <SidebarIcon />
+              Create your first board
+            </Button>
+          )}
+
           <Button
-            disabled={false}
-            className="flex w-[420px] items-center justify-center gap-x-3"
-            size="lg"
-          >
-            <SidebarIcon />
-            Create your first board
-          </Button>
-          <Button
-            disabled={false}
-            className="w-[420px] flex items-center gap-x-3"
-            variant="outline"
+            disabled={boardsData?.length === 0}
+            onClick={redirectBoardHandler}
+            className="w-[420px] flex items-center gap-x-3  font-semibold"
+            variant="secondary"
           >
             Visit your boards
             <ArrowRightIcon className="size-4" />

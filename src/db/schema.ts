@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   timestamp,
@@ -19,6 +20,10 @@ export const users = pgTable("user", {
   image: text("image"),
   password: text("password"),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  boards: many(boards),
+}));
 
 export const accounts = pgTable(
   "account",
@@ -97,3 +102,10 @@ export const boards = pgTable("boards", {
   title: text("title").notNull(),
   columns: text("columns").array().notNull().unique(),
 });
+
+export const boardsRelations = relations(boards, ({ one }) => ({
+  user: one(users, {
+    fields: [boards.userId],
+    references: [users.id],
+  }),
+}));

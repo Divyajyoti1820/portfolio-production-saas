@@ -23,6 +23,8 @@ export const useCreateBoard = () => {
     },
     onSuccess: (data) => {
       toast.success(`New Board "${data.data.title}" created`);
+      //TODO : Invalidate Query GET_BOARDS
+      //TODO : Invalidate Query GET_BOARDS_BY_ID
     },
     onError: () => {
       toast.success("Failed to create Board");

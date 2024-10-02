@@ -25,22 +25,22 @@ export const UserButton = () => {
   }
 
   const name = session.data?.user?.name;
-  const imageUrl = session.data.user?.name;
+  const imageUrl = session.data.user?.image;
   const fallback = name?.charAt(0).toUpperCase();
 
   return (
     <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild className="outline-none relative">
-        <Avatar className="cursor-pointer size-10 hover:opacity-75 transition">
+        <Avatar className="cursor-pointer size-8 hover:opacity-75 transition rounded-md">
           <AvatarImage src={imageUrl || ""} alt={name || ""} />
-          <AvatarFallback className="flex items-center justify-center bg-black font-medium text-primary">
+          <AvatarFallback className="rounded-md flex items-center justify-center bg-black font-medium text-lg text-primary">
             {fallback}
           </AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-50">
         <DropdownMenuItem
-          className="h-10 cursor-pointer text-destructive font-semibold"
+          className="h-8 cursor-pointer text-destructive font-semibold"
           disabled={false}
           onClick={() => signOut()}
         >
