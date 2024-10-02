@@ -8,7 +8,7 @@ const BoardLayout = ({ children }: Props) => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="">{children}</main>
+      <main className="h-full">{children}</main>
     </div>
   );
 };
