@@ -1,8 +1,12 @@
+import { motion } from "framer-motion";
 import Image from "next/image";
 
 export const Logo = () => {
   return (
-    <div className="grid size-10 shrink-0 place-content-center rounded-md">
+    <motion.div
+      layout
+      className="grid size-10 shrink-0 place-content-center rounded-md"
+    >
       <Image
         src="/logo.svg"
         alt="Productivity | SaaS"
@@ -10,6 +14,6 @@ export const Logo = () => {
         height={120}
         className="object-cover"
       />
-    </div>
+    </motion.div>
   );
 };
