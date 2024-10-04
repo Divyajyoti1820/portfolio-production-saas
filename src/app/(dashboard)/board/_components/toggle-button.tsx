@@ -19,7 +19,10 @@ export const ToggleButton = ({ open, setOpen }: Props) => {
     >
       <motion.div
         layout
-        className="size-5 place-content-center flex items-center justify-between w-full"
+        className={cn(
+          "size-5 place-content-center flex items-center justify-between w-full",
+          !open && "justify-center"
+        )}
       >
         {open && (
           <motion.span layout className="text-sm font-medium">
@@ -28,7 +31,7 @@ export const ToggleButton = ({ open, setOpen }: Props) => {
         )}
         {open && (
           <motion.div layout>
-            <ChevronsLeftIcon className="text-primary size-8" />
+            <ChevronsLeftIcon className="text-primary size-6" />
           </motion.div>
         )}
         {!open && (

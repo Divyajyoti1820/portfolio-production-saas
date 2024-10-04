@@ -1,3 +1,4 @@
+import { Navbar } from "./_components/navbar";
 import { Sidebar } from "./_components/sidebar";
 
 interface Props {
@@ -8,7 +9,10 @@ const BoardLayout = ({ children }: Props) => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="h-full">{children}</main>
+      <main className="h-full w-full">
+        <Navbar />
+        {children}
+      </main>
     </div>
   );
 };

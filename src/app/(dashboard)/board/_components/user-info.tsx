@@ -75,17 +75,19 @@ export const UserInfo = ({ open }: Props) => {
       )}
     >
       <motion.div layout>
-        <Avatar
-          className={cn(
-            "cursor-pointer size-7 hover:opacity-75 transition rounded-md",
-            !open && "border-primary border-2 size-9"
-          )}
-        >
-          <AvatarImage src={imageUrl || ""} alt={name || ""} />
-          <AvatarFallback className="rounded-md flex items-center justify-center bg-black font-medium text-lg text-primary">
-            {fallback}
-          </AvatarFallback>
-        </Avatar>
+        <Hint label={name || "User"} align="end" side="right">
+          <Avatar
+            className={cn(
+              "cursor-pointer size-7 hover:opacity-75 transition rounded-md",
+              !open && "border-primary border-2 size-9"
+            )}
+          >
+            <AvatarImage src={imageUrl || ""} alt={name || ""} />
+            <AvatarFallback className="rounded-md flex items-center justify-center bg-black font-medium text-lg text-primary">
+              {fallback}
+            </AvatarFallback>
+          </Avatar>
+        </Hint>
       </motion.div>
       {open && (
         <>
@@ -103,6 +105,7 @@ export const UserInfo = ({ open }: Props) => {
               {session?.user?.name}
             </motion.span>
             <motion.span
+              layout
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.125 }}

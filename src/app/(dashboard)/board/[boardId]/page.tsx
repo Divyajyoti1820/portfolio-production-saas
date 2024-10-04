@@ -1,5 +1,5 @@
 const BoardIdPage = () => {
-  return <div>Board Id Page</div>;
+  return <div className="w-full">Board Id Page</div>;
 };
 
 export default BoardIdPage;

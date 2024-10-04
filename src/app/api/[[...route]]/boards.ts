@@ -6,7 +6,7 @@ import z from "zod";
 
 import { db } from "@/db/drizzle";
 import { boards } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 
 const app = new Hono()
   .post(
@@ -64,6 +64,54 @@ const app = new Hono()
     }
 
     return c.json({ data: data }, 200);
-  });
+  })
+  .delete(
+    "/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const auth = c.get("authUser");
+      const { id } = c.req.valid("param");
+
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const data = await db
+        .delete(boards)
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)))
+        .returning();
+
+      if (data.length === 0) {
+        return c.json({ error: "[DELETE_BOARD] : Board not found" }, 404);
+      }
+
+      return c.json({ data: { id } });
+    }
+  )
+  .get(
+    "/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ id: z.string() })),
+    async (c) => {
+      const auth = c.get("authUser");
+      const { id } = c.req.valid("param");
+
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const data = await db
+        .select()
+        .from(boards)
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)));
+
+      if (data?.length === 0) {
+        return c.json({ error: "[GET_BOARD_BY_ID] : Board not found" }, 404);
+      }
+
+      return c.json({ data: data[0] });
+    }
+  );
 
 export default app;
