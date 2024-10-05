@@ -5,9 +5,10 @@ import { motion } from "framer-motion";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-import { SidebarIcon } from "lucide-react";
+import { PlusIcon, SidebarIcon } from "lucide-react";
 import { Hint } from "@/components/hint";
 import { extractAlphabets } from "@/features/boards/util";
+import { useCreateBoardModal } from "@/features/boards/hooks/use-create-board-modal";
 
 type Props = {
   open: boolean;
@@ -16,6 +17,7 @@ type Props = {
 export const BoardsList = ({ open }: Props) => {
   const router = useRouter();
   const { data, isLoading, isError } = useGetBoards();
+  const [openBoardModal, setOpenBoardModal] = useCreateBoardModal();
 
   if (isLoading) {
     return (
@@ -78,7 +80,7 @@ export const BoardsList = ({ open }: Props) => {
                 </>
               )}
               {!open && (
-                <Hint label={board.title} side="right" align="end">
+                <Hint label={board.title} side="right" align="center">
                   <motion.div
                     layout
                     initial={{ opacity: 0, y: 12 }}
@@ -93,6 +95,27 @@ export const BoardsList = ({ open }: Props) => {
             </motion.li>
           );
         })}
+      <Hint hide={open} label="Add new board" side="right" align="center">
+        <motion.li
+          layout
+          className="flex flex-row mt-4 items-center border-2 border-transparent justify-center gap-x-2 bg-black p-2 rounded-md  text-primary hover:border-primary transitions cursor-pointer"
+          onClick={() => setOpenBoardModal(!openBoardModal)}
+        >
+          <motion.div layout>
+            <PlusIcon className="size-6" />
+          </motion.div>
+          {open && (
+            <motion.span
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.125 }}
+              className="font-semibold"
+            >
+              Add new board
+            </motion.span>
+          )}
+        </motion.li>
+      </Hint>
     </motion.ul>
   );
 };

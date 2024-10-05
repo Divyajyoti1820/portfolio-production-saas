@@ -75,7 +75,7 @@ export const UserInfo = ({ open }: Props) => {
       )}
     >
       <motion.div layout>
-        <Hint label={name || "User"} align="end" side="right">
+        <Hint label={name || "User"} align="end" side="center">
           <Avatar
             className={cn(
               "cursor-pointer size-7 hover:opacity-75 transition rounded-md",
@@ -114,7 +114,7 @@ export const UserInfo = ({ open }: Props) => {
               {session?.user?.email}
             </motion.span>
           </motion.div>
-          <Hint label="Logout" side="right" align="end">
+          <Hint label="Logout" side="right" align="center">
             <motion.button
               layout
               className="p-1 text-destructive rounded-md hover:bg-black/50"

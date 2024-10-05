@@ -77,6 +77,10 @@ const app = new Hono()
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
 
+      if (!id) {
+        return c.json({ error: "[DELETE_BOARD : Board not found]" }, 400);
+      }
+
       const data = await db
         .delete(boards)
         .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)))
@@ -101,6 +105,10 @@ const app = new Hono()
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
 
+      if (!id) {
+        return c.json({ error: "[GET_BOARD_BY_ID : Board not found]" }, 400);
+      }
+
       const data = await db
         .select()
         .from(boards)
@@ -108,6 +116,47 @@ const app = new Hono()
 
       if (data?.length === 0) {
         return c.json({ error: "[GET_BOARD_BY_ID] : Board not found" }, 404);
+      }
+
+      return c.json({ data: data[0] });
+    }
+  )
+  .patch(
+    "/:id",
+    verifyAuth(),
+    zValidator(
+      "param",
+      z.object({
+        id: z.string(),
+      })
+    ),
+    zValidator(
+      "json",
+      z.object({
+        title: z.string(),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      const { id } = c.req.valid("param");
+      const { title } = c.req.valid("json");
+
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      if (!id) {
+        return c.json({ error: "[PATCH_BOARD : Board not found]" }, 400);
+      }
+
+      const data = await db
+        .update(boards)
+        .set({ title })
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)))
+        .returning();
+
+      if (data.length === 0) {
+        return c.json({ error: "[PATCH_BOARD] : Failed to update board" }, 401);
       }
 
       return c.json({ data: data[0] });

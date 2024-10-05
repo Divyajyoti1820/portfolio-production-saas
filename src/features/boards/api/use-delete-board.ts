@@ -5,26 +5,30 @@ import { toast } from "sonner";
 
 import { client } from "@/lib/hono";
 
-type ResponseType = InferResponseType<(typeof client.api.boards)["$post"], 200>;
+type ResponseType = InferResponseType<
+  (typeof client.api.boards)[":id"]["$delete"],
+  200
+>;
 type RequestType = InferRequestType<
-  (typeof client.api.boards)["$post"]
->["json"];
+  (typeof client.api.boards)[":id"]["$delete"]
+>["param"];
 
-export const useCreateBoard = () => {
+export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
-      const response = await client.api.boards.$post({ json });
+    mutationFn: async (param) => {
+      const response = await client.api.boards[":id"].$delete({ param });
 
       if (!response.ok) {
-        throw new Error("[CREATE_BOARD] : Something went wrong!!");
+        throw new Error("[DELETE_BOARD] : Something went wrong!!");
       }
 
       return await response.json();
     },
-    onSuccess: (data) => {
-      toast.success(`New Board "${data.data.title}" created`);
+    onSuccess: ({ data }) => {
+      toast.success(`Board removed successfully`);
       queryClient.invalidateQueries({ queryKey: ["boards"] });
+      queryClient.invalidateQueries({ queryKey: ["board", { id: data.id }] });
     },
     onError: () => {
       toast.success("Failed to create Board");
