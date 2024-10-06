@@ -75,7 +75,7 @@ export const UserInfo = ({ open }: Props) => {
       )}
     >
       <motion.div layout>
-        <Hint label={name || "User"} align="end" side="center">
+        <Hint label={name || "User"} align="center" side="right">
           <Avatar
             className={cn(
               "cursor-pointer size-7 hover:opacity-75 transition rounded-md",

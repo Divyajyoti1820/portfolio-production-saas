@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRouter } from "next/navigation";
-import { PlusIcon, SidebarIcon } from "lucide-react";
+import { AlertOctagonIcon, PlusIcon, SidebarIcon } from "lucide-react";
 import { Hint } from "@/components/hint";
 import { extractAlphabets } from "@/features/boards/util";
 import { useCreateBoardModal } from "@/features/boards/hooks/use-create-board-modal";
@@ -45,7 +45,35 @@ export const BoardsList = ({ open }: Props) => {
   }
 
   if (isError && !data) {
-    return;
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center gap-y-1 w-full">
+        <Hint
+          hide={open}
+          label="Something went wrong"
+          side="right"
+          align="center"
+        >
+          <motion.div
+            layout
+            className="flex flex-col items-center border-2 border-transparent justify-center gap-y-2 p-2 rounded-md text-destructive hover:bg-black transitions"
+          >
+            <motion.div layout className="size-6">
+              <AlertOctagonIcon />
+            </motion.div>
+            {open && (
+              <motion.span
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.125 }}
+                className="font-medium text-sm"
+              >
+                Something went wrong
+              </motion.span>
+            )}
+          </motion.div>
+        </Hint>
+      </div>
+    );
   }
 
   return (
@@ -102,7 +130,7 @@ export const BoardsList = ({ open }: Props) => {
           onClick={() => setOpenBoardModal(!openBoardModal)}
         >
           <motion.div layout>
-            <PlusIcon className="size-6" />
+            <PlusIcon className="size-6 font-bold" />
           </motion.div>
           {open && (
             <motion.span

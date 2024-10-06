@@ -6,7 +6,7 @@ import { LogOutIcon } from "lucide-react";
 
 export const LogoutButton = () => {
   return (
-    <Hint label="Logout" side="right" align="end">
+    <Hint label="Logout" side="right" align="center">
       <motion.button
         layout
         initial={{ opacity: 0, y: 12 }}

@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 
 import { cn } from "@/lib/utils";
 import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
+import { Hint } from "@/components/hint";
 
 type Props = {
   open: boolean;
@@ -35,9 +36,11 @@ export const ToggleButton = ({ open, setOpen }: Props) => {
           </motion.div>
         )}
         {!open && (
-          <motion.div layout>
-            <ChevronsRightIcon className="text-primary size-6" />
-          </motion.div>
+          <Hint label="Open" align="center" side="right">
+            <motion.div layout>
+              <ChevronsRightIcon className="text-primary size-6" />
+            </motion.div>
+          </Hint>
         )}
       </motion.div>
     </motion.button>

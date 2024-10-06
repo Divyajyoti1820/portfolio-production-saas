@@ -12,11 +12,14 @@ import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
 import { useBoardId } from "@/hooks/use-board-id";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
-import { toast } from "sonner";
+import { useGetBoards } from "@/features/boards/api/use-get-boards";
+import { useRouter } from "next/navigation";
 
 export const Navbar = () => {
+  const router = useRouter();
   const isSmallScreen = useMedia("(max-width:768px)", false);
   const boardId = useBoardId();
+  const { data: boardsData } = useGetBoards();
 
   const [Confirm, ConfirmationDialog] = useConfirm({
     title: "Delete board",
@@ -36,18 +39,18 @@ export const Navbar = () => {
       { id: boardId },
       {
         onSuccess: () => {
-          toast.success("Board removed successfully");
-          //TODO : we have to check if there is more board available or not and redirect to next board + If there is no board then redirect to home page.
-        },
-        onError: () => {
-          toast.error("Failed to remove board");
+          if (!boardsData || boardsData.length === 0) {
+            return router.replace("/");
+          }
+          return router.replace(`/board/${boardsData[0].id}`);
         },
       }
     );
   };
-
   /* Board Deletion Handler */
-  /* */
+
+  /* Edit Board Handler */
+  /* Edit Board Handler */
 
   return (
     <>
