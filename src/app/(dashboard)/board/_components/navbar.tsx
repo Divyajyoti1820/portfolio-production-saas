@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 
 import { useMedia } from "react-use";
 
@@ -10,16 +11,23 @@ import { useConfirm } from "@/hooks/use-confirm";
 
 import { Hint } from "@/components/hint";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import { useBoardId } from "@/hooks/use-board-id";
-import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
+import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
-import { useRouter } from "next/navigation";
+import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
+import { useEditBoardModal } from "@/features/boards/hooks/use-edit-board-modal";
 
 export const Navbar = () => {
   const router = useRouter();
   const isSmallScreen = useMedia("(max-width:768px)", false);
   const boardId = useBoardId();
   const { data: boardsData } = useGetBoards();
+  const { data: boardData, isLoading: boardDataLoading } = useGetBoard(boardId);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_editBoardOpen, setEditBoardOpen] = useEditBoardModal();
 
   const [Confirm, ConfirmationDialog] = useConfirm({
     title: "Delete board",
@@ -39,30 +47,33 @@ export const Navbar = () => {
       { id: boardId },
       {
         onSuccess: () => {
-          if (!boardsData || boardsData.length === 0) {
-            return router.replace("/");
-          }
-          return router.replace(`/board/${boardsData[0].id}`);
+          if (boardsData && boardsData.length !== 0)
+            router.replace(`/board/${boardsData[0].id}`);
         },
       }
     );
   };
   /* Board Deletion Handler */
 
-  /* Edit Board Handler */
-  /* Edit Board Handler */
+  if (!boardsData || boardsData.length === 0) {
+    return router.replace("/");
+  }
 
   return (
     <>
       <ConfirmationDialog />
       <nav className="w-full px-4 h-14 flex items-center justify-between bg-card border-b-2 border-slate-700">
         <div className="max-w-[200px]">
-          <h1 className="text-lg font-semibold">Test Title</h1>
+          {boardDataLoading ? (
+            <Skeleton className="w-36 h-8 bg-black/50" />
+          ) : (
+            <h1 className="text-lg font-semibold">{boardData?.title}</h1>
+          )}
         </div>
         <div className="flex flex-row gap-x-2 items-center justify-center">
           <Hint
             hide={isSmallScreen ? false : true}
-            label="Create new task"
+            label="Add new task"
             side="bottom"
             align="center"
           >
@@ -79,11 +90,12 @@ export const Navbar = () => {
               size="sm"
               variant="ghost"
               className="text-primary hover:bg-secondary hover:text-primary"
+              onClick={() => setEditBoardOpen(true)}
             >
               <PencilIcon className="size-5" />
             </Button>
           </Hint>
-          <Hint label="Delete Board" side="bottom" align="center">
+          <Hint label="Delete board" side="bottom" align="start">
             <Button
               size="sm"
               variant="ghost"

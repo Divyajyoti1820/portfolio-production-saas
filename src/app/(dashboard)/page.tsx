@@ -30,8 +30,7 @@ const Home = () => {
   };
 
   /* Creating Date */
-  const today = format(new Date(), "EEEE,dd MMM yyyy | HH:mm bb | OOOO");
-
+  const today = format(new Date(), "EEEE, dd MMM yyyy | HH:mm | OOOO");
   /* Creating Date */
 
   return (

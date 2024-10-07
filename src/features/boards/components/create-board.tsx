@@ -52,7 +52,11 @@ export const CreateBoard = () => {
 
     mutation.mutate(
       { title, columns },
+
       {
+        onSuccess: () => {
+          setOpen(false);
+        },
         onSettled: () => {
           setTitle("");
           setColumns([""]);
