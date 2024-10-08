@@ -6,6 +6,7 @@ import {
   text,
   primaryKey,
   integer,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -103,9 +104,42 @@ export const boards = pgTable("boards", {
   columns: text("columns").array().notNull().unique(),
 });
 
-export const boardsRelations = relations(boards, ({ one }) => ({
+export const boardsRelations = relations(boards, ({ one, many }) => ({
   user: one(users, {
     fields: [boards.userId],
     references: [users.id],
+  }),
+  tasks: many(tasks),
+}));
+
+type subtaskSchema = {
+  title: string;
+  completed: boolean;
+};
+
+export const tasks = pgTable("tasks", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  boardId: text("boardId")
+    .notNull()
+    .references(() => boards.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description"),
+  column: text("column").notNull(),
+  subtasks: jsonb("subtasks").$type<subtaskSchema[]>(),
+});
+
+export const tasksRelations = relations(tasks, ({ one }) => ({
+  user: one(users, {
+    fields: [tasks.userId],
+    references: [users.id],
+  }),
+  board: one(boards, {
+    fields: [tasks.boardId],
+    references: [boards.id],
   }),
 }));
