@@ -11,38 +11,43 @@ type Props = {
 
 export const ToggleButton = ({ open, setOpen }: Props) => {
   return (
-    <motion.button
-      layout
-      onClick={() => setOpen(!open)}
-      className={cn(
-        "flex items-center p-2 hover:bg-black/50 rounded-md transition"
-      )}
+    <Hint
+      label="Open sidebar"
+      hide={open ? true : false}
+      align="center"
+      side="right"
     >
-      <motion.div
+      <motion.button
         layout
+        onClick={() => setOpen(!open)}
         className={cn(
-          "size-5 place-content-center flex items-center justify-between w-full",
-          !open && "justify-center"
+          "flex items-center p-2 hover:bg-black/50 rounded-md transition"
         )}
       >
-        {open && (
-          <motion.span layout className="text-sm font-medium">
-            Hide Sidebar
-          </motion.span>
-        )}
-        {open && (
-          <motion.div layout>
-            <ChevronsLeftIcon className="text-primary size-6" />
-          </motion.div>
-        )}
-        {!open && (
-          <Hint label="Open" align="center" side="right">
+        <motion.div
+          layout
+          className={cn(
+            "size-5 place-content-center flex items-center justify-between w-full",
+            !open && "justify-center"
+          )}
+        >
+          {open && (
+            <motion.span layout className="text-sm font-medium">
+              Hide Sidebar
+            </motion.span>
+          )}
+          {open && (
+            <motion.div layout>
+              <ChevronsLeftIcon className="text-primary size-6" />
+            </motion.div>
+          )}
+          {!open && (
             <motion.div layout>
               <ChevronsRightIcon className="text-primary size-6" />
             </motion.div>
-          </Hint>
-        )}
-      </motion.div>
-    </motion.button>
+          )}
+        </motion.div>
+      </motion.button>
+    </Hint>
   );
 };

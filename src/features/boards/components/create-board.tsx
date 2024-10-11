@@ -43,7 +43,7 @@ export const CreateBoard = () => {
     newColumns[index] = value;
     setColumns(newColumns);
   };
-  /* TRIAL CODE */
+  /* Columns Input Functions */
 
   /* Create Board Form Handler */
   const mutation = useCreateBoard();

@@ -18,6 +18,7 @@ import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
 import { useEditBoardModal } from "@/features/boards/hooks/use-edit-board-modal";
+import { useCreateTaskModal } from "@/features/tasks/hooks/use-create-task-modal";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -25,6 +26,9 @@ export const Navbar = () => {
   const boardId = useBoardId();
   const { data: boardsData } = useGetBoards();
   const { data: boardData, isLoading: boardDataLoading } = useGetBoard(boardId);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_taskModalOpen, setTaskModalOpen] = useCreateTaskModal();
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_editBoardOpen, setEditBoardOpen] = useEditBoardModal();
@@ -80,6 +84,7 @@ export const Navbar = () => {
             <Button
               size="sm"
               className="flex items-center justify-center gap-x-2"
+              onClick={() => setTaskModalOpen(true)}
             >
               <PlusSquareIcon className="size-5" />
               {!isSmallScreen && <span>Add a new task</span>}

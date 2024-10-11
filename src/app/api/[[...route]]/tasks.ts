@@ -10,7 +10,7 @@ import { and, eq } from "drizzle-orm";
 
 const app = new Hono().post(
   "/",
-  verifyAuth,
+  verifyAuth(),
   zValidator(
     "json",
     z.object({
