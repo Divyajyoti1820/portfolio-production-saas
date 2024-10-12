@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import { useRouter } from "next/navigation";
 
 import { useMedia } from "react-use";
@@ -60,58 +59,56 @@ export const Navbar = () => {
   /* Board Deletion Handler */
 
   if (!boardsData || boardsData.length === 0) {
-    return router.replace("/");
+    router.replace("/");
   }
 
   return (
-    <>
+    <nav className="w-full px-4 h-14 flex items-center justify-between bg-card border-b-2 border-slate-700">
       <ConfirmationDialog />
-      <nav className="w-full px-4 h-14 flex items-center justify-between bg-card border-b-2 border-slate-700">
-        <div className="max-w-[200px]">
-          {boardDataLoading ? (
-            <Skeleton className="w-36 h-8 bg-black/50" />
-          ) : (
-            <h1 className="text-lg font-semibold">{boardData?.title}</h1>
-          )}
-        </div>
-        <div className="flex flex-row gap-x-2 items-center justify-center">
-          <Hint
-            hide={isSmallScreen ? false : true}
-            label="Add new task"
-            side="bottom"
-            align="center"
+      <div className="max-w-[200px]">
+        {boardDataLoading ? (
+          <Skeleton className="w-36 h-8 bg-black/50" />
+        ) : (
+          <h1 className="text-lg font-semibold">{boardData?.title}</h1>
+        )}
+      </div>
+      <div className="flex flex-row gap-x-2 items-center justify-center">
+        <Hint
+          hide={isSmallScreen ? false : true}
+          label="Add new task"
+          side="bottom"
+          align="center"
+        >
+          <Button
+            size="sm"
+            className="flex items-center justify-center gap-x-2"
+            onClick={() => setTaskModalOpen(true)}
           >
-            <Button
-              size="sm"
-              className="flex items-center justify-center gap-x-2"
-              onClick={() => setTaskModalOpen(true)}
-            >
-              <PlusSquareIcon className="size-5" />
-              {!isSmallScreen && <span>Add a new task</span>}
-            </Button>
-          </Hint>
-          <Hint label="Edit board" side="bottom" align="center">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-primary hover:bg-secondary hover:text-primary"
-              onClick={() => setEditBoardOpen(true)}
-            >
-              <PencilIcon className="size-5" />
-            </Button>
-          </Hint>
-          <Hint label="Delete board" side="bottom" align="start">
-            <Button
-              size="sm"
-              variant="ghost"
-              className="text-destructive hover:text-white hover:bg-destructive"
-              onClick={deleteBoardHandler}
-            >
-              <Trash2Icon className="size-5" />
-            </Button>
-          </Hint>
-        </div>
-      </nav>
-    </>
+            <PlusSquareIcon className="size-5" />
+            {!isSmallScreen && <span>Add a new task</span>}
+          </Button>
+        </Hint>
+        <Hint label="Edit board" side="bottom" align="center">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-primary hover:bg-secondary hover:text-primary"
+            onClick={() => setEditBoardOpen(true)}
+          >
+            <PencilIcon className="size-5" />
+          </Button>
+        </Hint>
+        <Hint label="Delete board" side="bottom" align="start">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="text-destructive hover:text-white hover:bg-destructive"
+            onClick={deleteBoardHandler}
+          >
+            <Trash2Icon className="size-5" />
+          </Button>
+        </Hint>
+      </div>
+    </nav>
   );
 };

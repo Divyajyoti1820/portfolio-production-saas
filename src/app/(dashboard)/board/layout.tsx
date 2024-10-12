@@ -9,7 +9,7 @@ const BoardLayout = ({ children }: Props) => {
   return (
     <div className="flex">
       <Sidebar />
-      <main className="h-full w-full">
+      <main className="h-full flex-1 w-[calc(100vw-225px)]">
         <Navbar />
         {children}
       </main>

@@ -17,7 +17,7 @@ export const Sidebar = () => {
     <motion.aside
       layout
       className={cn(
-        "sticky flex flex-col p-2 top-0 h-screen shrink-0 bg-card shadow-md gap-y-2 border-r-2 border-slate-700",
+        "sticky flex flex-col p-2 top-0 h-screen shrink-0 bg-card shadow-md gap-y-2 border-r-2 border-slate-700 z-[40]",
         open ? "w-[225px]" : "fit-content"
       )}
     >
