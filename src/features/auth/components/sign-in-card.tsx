@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
-// import { LoaderIcon } from "lucide-react";
+import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+
+import { signIn } from "next-auth/react";
 
 import {
   Card,
@@ -19,10 +21,11 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export const SignInCard = () => {
+  const params = useSearchParams();
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const error = params.get("error");
   /* Credentials Form Handler */
   const credentialsFormHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -30,22 +33,31 @@ export const SignInCard = () => {
   /* Credentials Form Handler */
 
   /* OAuth Provider Handler  */
-  const OAuthProviderHandler = () => {};
+  const OAuthProviderHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
   /* OAuth Provider Handler  */
 
   return (
-    <Card className="max-w-[480px]  h-auto">
+    <Card className="max-w-[480px] h-auto space-y-2">
       <CardHeader className="space-y-2">
         <CardTitle>Login</CardTitle>
         <CardDescription>
           To continue to your board use credentials or other service.
         </CardDescription>
+      </CardHeader>
+
+      <CardContent className="space-y-3.5">
         <div className="w-full bg-black flex flex-col items-center justify-center gap-y-2 p-2 text-xs rounded-md">
           <p>Test Username : test.user@testmail.com</p>
           <p>Test Password : Test@1234TE</p>
         </div>
-      </CardHeader>
-      <CardContent className="space-y-3.5">
+        {!!error && (
+          <div className="w-full flex items-center gap-x-2 justify-center bg-destructive rounded-md p-2 text-sm">
+            <AlertTriangleIcon />
+            <p>Something went wrong!</p>
+          </div>
+        )}
         <form onSubmit={credentialsFormHandler} className="space-y-2.5">
           <Input
             value={email}
@@ -77,7 +89,7 @@ export const SignInCard = () => {
         </div>
       </CardContent>
       <CardFooter className="w-full flex items-center justify-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Don&apos;t have an account?{" "}
           <span
             onClick={() => router.push("/sign-up")}

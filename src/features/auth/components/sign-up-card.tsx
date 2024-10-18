@@ -1,10 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 // import { LoaderIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+
+import { signIn } from "next-auth/react";
 
 import {
   Card,
@@ -17,13 +19,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { AlertTriangleIcon } from "lucide-react";
 
 export const SignUpCard = () => {
   const router = useRouter();
+  const params = useSearchParams();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const error = params.get("error");
 
   /* Credentials Form Handler */
   const credentialsFormHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -32,7 +37,9 @@ export const SignUpCard = () => {
   /* Credentials Form Handler */
 
   /* OAuth Provider Handler  */
-  const OAuthProviderHandler = () => {};
+  const OAuthProviderHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
   /* OAuth Provider Handler  */
 
   return (
@@ -44,6 +51,12 @@ export const SignUpCard = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-3.5">
+        {!!error && (
+          <div className="w-full flex items-center gap-x-2 justify-center bg-destructive rounded-md p-2 text-sm">
+            <AlertTriangleIcon />
+            <p>Something went wrong!</p>
+          </div>
+        )}
         <form onSubmit={credentialsFormHandler} className="space-y-2.5">
           <Input
             value={name}
@@ -87,7 +100,7 @@ export const SignUpCard = () => {
         </div>
       </CardContent>
       <CardFooter className="w-full flex items-center justify-center">
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Don&apos;t have an account?{" "}
           <span
             onClick={() => router.push("/sign-in")}
