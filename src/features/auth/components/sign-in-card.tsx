@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
+
 import {
   Card,
   CardContent,
@@ -13,17 +14,34 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+
 import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
 
 export const SignInCard = () => {
   const params = useSearchParams();
   const router = useRouter();
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
   const error = params.get("error");
+
+  const OAuthHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
+
+  const credentialHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    signIn("credentials", {
+      email: email,
+      password: password,
+      redirectTo: "/",
+    });
+  };
 
   return (
     <Card className="max-w-[450px] w-[460px] h-auto">
@@ -40,17 +58,17 @@ export const SignInCard = () => {
             <p>{error || "Something went wrong!!"}</p>
           </div>
         )}
-        <div className="w-full flex flex-col items-center justify-center bg-black p-2 rounded-xl text-[12px]">
+        <div className="w-full flex flex-col bg-black items-center justify-center p-2 rounded-xl text-[12px]">
           <p>
             <span className="text-primary font-semibold">Test Username</span> :
-            test.user@mail.com
+            test.user@testmail.com
           </p>
           <p>
             <span className="text-primary font-semibold">Test Password</span> :
             Test@1234TE
           </p>
         </div>
-        <form className="space-y-2">
+        <form className="space-y-2" onSubmit={credentialHandler}>
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -70,7 +88,8 @@ export const SignInCard = () => {
         <Separator />
         <Button
           disabled={false}
-          className="relative w-full bg-black hover:bg-black/50"
+          onClick={OAuthHandler}
+          className="relative w-full bg-black"
         >
           <FaGithub className="absolute size-8 top-3 left-2" />
           <p className="font-medium">Continue with GitHub</p>

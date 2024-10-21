@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
-import "./globals.css";
+import { SessionProvider } from "next-auth/react";
+import { Toaster } from "@/components/ui/sonner";
 
 import QueryProvider from "@/components/providers/query-provider";
+import { auth } from "@/auth";
+import "./globals.css";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -15,16 +18,23 @@ export const metadata: Metadata = {
     "Productivity is a visual work management system that uses colored cards and boards to help teams manage projects and workflows",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
-    <html lang="en">
-      <body className={font.className}>
-        <QueryProvider>{children}</QueryProvider>
-      </body>
-    </html>
+    <SessionProvider session={session}>
+      <html lang="en">
+        <body className={font.className}>
+          <QueryProvider>
+            <Toaster />
+            {children}
+          </QueryProvider>
+        </body>
+      </html>
+    </SessionProvider>
   );
 }

@@ -4,7 +4,10 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
-import { Button } from "@/components/ui/button";
+import { signIn } from "next-auth/react";
+
+import { toast } from "sonner";
+
 import {
   Card,
   CardContent,
@@ -13,19 +16,53 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+
 import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa";
+
+import { useCreateUser } from "@/features/auth/api/use-create-user";
 
 export const SignUpCard = () => {
   const params = useSearchParams();
   const router = useRouter();
+  const mutation = useCreateUser();
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+
   const error = params.get("error");
+
+  const OAuthHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
+
+  const CredentialHandler = () => {
+    if (password !== confirmPassword) {
+      return;
+    }
+
+    mutation.mutate(
+      { name, email, password },
+      {
+        onSuccess: () => {
+          signIn("credentials", {
+            name: name,
+            email: email,
+            password: password,
+            redirectTo: "/",
+          });
+        },
+        onError: () => {
+          toast.error("Something went wrong");
+        },
+      }
+    );
+  };
 
   return (
     <Card className="max-w-[450px] w-[460px] h-auto">
@@ -43,17 +80,8 @@ export const SignUpCard = () => {
             <p>{error || "Something went wrong!!"}</p>
           </div>
         )}
-        <div className="w-full flex flex-col items-center justify-center bg-black p-2 rounded-xl text-[12px]">
-          <p>
-            <span className="text-primary font-semibold">Test Username</span> :
-            test.user@mail.com
-          </p>
-          <p>
-            <span className="text-primary font-semibold">Test Password</span> :
-            Test@1234TE
-          </p>
-        </div>
-        <form className="space-y-2">
+
+        <form className="space-y-2" onSubmit={CredentialHandler}>
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -85,6 +113,7 @@ export const SignUpCard = () => {
         <Separator />
         <Button
           disabled={false}
+          onClick={OAuthHandler}
           className="relative w-full bg-black hover:bg-black/50"
         >
           <FaGithub className="absolute size-8 top-3 left-2" />
