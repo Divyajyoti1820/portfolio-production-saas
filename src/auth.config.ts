@@ -8,6 +8,10 @@ import { db } from "@/db";
 export default {
   adapter: DrizzleAdapter(db),
   providers: [GitHub],
+  pages: {
+    signIn: "/sign-in",
+    error: "/sign-in",
+  },
   session: {
     strategy: "jwt",
   },
