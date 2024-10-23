@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
+
+import { signIn } from "next-auth/react";
 
 import {
   Card,
@@ -16,7 +19,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
 
 export const SignInCard = () => {
@@ -26,6 +28,23 @@ export const SignInCard = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const error = params.get("error");
+
+  /* OAuth SignIn Handler */
+  const OAuthSignInHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
+  /* OAuth SignIn Handler */
+
+  /* Credentials SignIn Handler */
+  const CredentialsSignInHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    signIn("credentials", {
+      email: email,
+      password: password,
+      redirectTo: "/",
+    });
+  };
+  /* Credentials SignIn Handler */
 
   return (
     <Card className="w-[420px]">
@@ -52,7 +71,7 @@ export const SignInCard = () => {
             <p>Something went wrong</p>
           </div>
         )}
-        <form onSubmit={() => {}} className="space-y-2.5">
+        <form onSubmit={CredentialsSignInHandler} className="space-y-2.5">
           <Input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -70,7 +89,12 @@ export const SignInCard = () => {
           </Button>
         </form>
         <Separator />
-        <Button size="lg" variant="outline" className="w-full hover:bg-black">
+        <Button
+          size="lg"
+          onClick={OAuthSignInHandler}
+          variant="outline"
+          className="w-full hover:bg-black"
+        >
           <FaGithub className="size-5" />
           Continue with GitHub
         </Button>

@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 
 import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
+
+import { signIn } from "next-auth/react";
 
 import {
   Card,
@@ -14,17 +17,50 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useSearchParams } from "next/navigation";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+
+import { useCreateUser } from "@/features/auth/api/use-create-user";
 
 export const SignUpCard = () => {
   const params = useSearchParams();
   const router = useRouter();
+
+  const mutation = useCreateUser();
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const error = params.get("error");
+
+  /* OAuth SignUp Handler */
+  const OAuthSignUpHandler = () => {
+    signIn("github", { redirectTo: "/" });
+  };
+  /* OAuth SignUp Handler */
+
+  /* Credentials SignUp Handler */
+  const CredentialsSignUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (password === confirmPassword) {
+      toast.error("Passwords not same");
+      return;
+    }
+    mutation.mutate(
+      { name, email, password },
+      {
+        onSuccess: () => {
+          signIn("credentials", {
+            email: email,
+            password: password,
+            redirectTo: "/",
+          });
+          toast.success("User Registered successfully");
+        },
+      }
+    );
+  };
+  /* Credentials SignUp Handler */
 
   return (
     <Card className="w-[420px]">
@@ -46,7 +82,7 @@ export const SignUpCard = () => {
             <p>Something went wrong</p>
           </div>
         )}
-        <form onSubmit={() => {}} className="space-y-2.5">
+        <form onSubmit={CredentialsSignUpHandler} className="space-y-2.5">
           <Input
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -76,7 +112,12 @@ export const SignUpCard = () => {
           </Button>
         </form>
         <Separator />
-        <Button size="lg" variant="outline" className="w-full hover:bg-black">
+        <Button
+          size="lg"
+          onClick={OAuthSignUpHandler}
+          variant="outline"
+          className="w-full hover:bg-black"
+        >
           <FaGithub className="size-5" />
           Join us with GitHub
         </Button>
