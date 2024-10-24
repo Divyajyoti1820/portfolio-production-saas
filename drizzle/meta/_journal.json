@@ -8,6 +8,20 @@
       "when": 1729646961359,
       "tag": "0000_brief_maggott",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1729678758395,
+      "tag": "0001_serious_the_watchers",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1729743600121,
+      "tag": "0002_hard_random",
+      "breakpoints": true
     }
   ]
 }
