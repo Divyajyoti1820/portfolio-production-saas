@@ -1,14 +1,18 @@
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { MainSidebar } from "./_components/main-sidebar";
+
 interface Props {
   children: React.ReactNode;
 }
 
 const BoardPageLayout = ({ children }: Props) => {
   return (
-    <div className="h-full">
-      <main className="h-full flex items-center justify-center">
+    <SidebarProvider className="h-full">
+      <MainSidebar />
+      <main className="h-full w-full flex items-center justify-center">
         {children}
       </main>
-    </div>
+    </SidebarProvider>
   );
 };
 

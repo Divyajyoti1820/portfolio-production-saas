@@ -1,6 +1,8 @@
 const BoardIdPage = () => {
   return (
-    <div className="h-full flex items-center justify-center">Board Id Page</div>
+    <div className="h-full flex items-center justify-center text-white">
+      Board Id Page
+    </div>
   );
 };
 
