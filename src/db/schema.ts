@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   timestamp,
@@ -19,6 +20,10 @@ export const users = pgTable("user", {
   image: text("image"),
   password: text("password"),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  boards: many(boards),
+}));
 
 export const accounts = pgTable(
   "account",
@@ -86,3 +91,38 @@ export const authenticators = pgTable(
     }),
   })
 );
+
+export const boards = pgTable("boards", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+});
+
+export const boardRelations = relations(boards, ({ one, many }) => ({
+  user: one(users, {
+    fields: [boards.userId],
+    references: [users.id],
+  }),
+  columns: many(columns),
+}));
+
+export const columns = pgTable("columns", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  title: text("title").notNull(),
+  boardId: text("boardId")
+    .notNull()
+    .references(() => boards.id, { onDelete: "cascade" }),
+});
+
+export const columnRelations = relations(columns, ({ one }) => ({
+  board: one(boards, {
+    fields: [columns.boardId],
+    references: [boards.id],
+  }),
+}));

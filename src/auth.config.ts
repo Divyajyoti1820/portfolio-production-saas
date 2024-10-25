@@ -77,6 +77,7 @@ export default {
   pages: {
     signIn: "/sign-in",
     error: "/sign-in",
+    signOut: "/sign-in",
   },
   session: {
     strategy: "jwt",
