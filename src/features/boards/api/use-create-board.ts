@@ -1,5 +1,5 @@
 import { client } from "@/lib/hono";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { InferRequestType, InferResponseType } from "hono";
 
@@ -10,6 +10,7 @@ type RequestType = InferRequestType<
 type ResponseType = InferResponseType<(typeof client.api.boards)["$post"], 200>;
 
 export const useCreateBoard = () => {
+  const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
       const response = await client.api.boards.$post({ json });
@@ -19,6 +20,9 @@ export const useCreateBoard = () => {
       }
 
       return await response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["boards"] });
     },
   });
   return mutation;

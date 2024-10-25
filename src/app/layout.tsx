@@ -8,6 +8,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/auth";
 import QueryProvider from "@/components/providers/query-provider";
 import { ModalsProvider } from "@/components/providers/modals-providers";
+import { JotaiProvider } from "@/components/providers/jotai-provider";
 
 const font = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,9 +33,11 @@ export default async function RootLayout({
       <html lang="en">
         <body className={font.className}>
           <QueryProvider>
-            <ModalsProvider />
-            <Toaster />
-            {children}
+            <JotaiProvider>
+              <ModalsProvider />
+              <Toaster />
+              {children}
+            </JotaiProvider>
           </QueryProvider>
         </body>
       </html>
