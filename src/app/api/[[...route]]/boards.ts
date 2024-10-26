@@ -73,6 +73,99 @@ const app = new Hono()
     }
 
     return c.json({ data: data });
-  });
+  })
+  .get(
+    "/:id",
+    verifyAuth(),
+    zValidator(
+      "param",
+      z.object({
+        id: z.string(),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { id } = c.req.valid("param");
+
+      const data = await db
+        .select()
+        .from(boards)
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)));
+
+      if (!data || data.length === 0) {
+        return c.json({ error: "[BOARD_GET] : Board not found" }, 400);
+      }
+
+      return c.json({ data: data[0] });
+    }
+  )
+  .delete(
+    "/:id",
+    verifyAuth(),
+    zValidator(
+      "param",
+      z.object({
+        id: z.string(),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { id } = c.req.valid("param");
+
+      const data = await db
+        .delete(boards)
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)))
+        .returning();
+
+      if (!data || data.length === 0) {
+        return c.json(
+          { error: "[BOARD_DELETE] : Failed to delete board" },
+          400
+        );
+      }
+
+      return c.json({ data: id });
+    }
+  )
+  .patch(
+    "/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator("json", z.object({ title: z.string().min(3).max(25) })),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { id } = c.req.valid("param");
+      const { title } = c.req.valid("json");
+
+      const data = await db
+        .update(boards)
+        .set({
+          title: title,
+        })
+        .where(and(eq(boards.id, id), eq(boards.userId, auth.token.id)))
+        .returning();
+
+      if (!data || data.length === 0) {
+        return c.json(
+          { error: "[BOARD_UPDATE] : Failed to update board" },
+          400
+        );
+      }
+
+      return c.json({ data: id });
+    }
+  );
 
 export default app;

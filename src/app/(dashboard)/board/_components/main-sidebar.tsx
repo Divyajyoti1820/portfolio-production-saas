@@ -1,8 +1,8 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 import {
   Sidebar,
@@ -13,12 +13,11 @@ import {
 } from "@/components/ui/sidebar";
 
 import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
-import { UserInfo } from "./user-info";
 
+import { UserInfo } from "./user-info";
 import { MainContent } from "./main-content";
-import { Hint } from "@/components/hint";
 import { LogoutButton } from "./logout-button";
-import { useRouter } from "next/navigation";
+import { Hint } from "@/components/hint";
 
 export const MainSidebar = () => {
   const router = useRouter();
