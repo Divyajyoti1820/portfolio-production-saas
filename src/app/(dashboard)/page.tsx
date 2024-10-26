@@ -90,7 +90,7 @@ const Home = () => {
           <p className="text-2xl font-bold text-blue-500">Be Productive!</p>
 
           <div className="flex w-full flex-col gap-y-3 items-center justify-center">
-            {Boards && Boards.length > 1 && (
+            {Boards && Boards.length === 0 && (
               <Button
                 className="w-[50%]"
                 size="lg"

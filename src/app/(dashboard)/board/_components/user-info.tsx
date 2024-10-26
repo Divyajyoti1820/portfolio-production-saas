@@ -76,7 +76,7 @@ export const UserInfo = ({ open }: Props) => {
             !open && "hidden"
           )}
         >
-          <p className="text-md font-medium text-blue-500">{name}</p>
+          <p className="text-sm font-medium text-blue-500">{name}</p>
           <p className="text-[10px] text-muted-foreground">
             {session.data?.user?.email}
           </p>

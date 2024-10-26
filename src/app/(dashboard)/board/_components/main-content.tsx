@@ -65,7 +65,7 @@ export const MainContent = ({ open }: Props) => {
     setCreateBoardModal(!createBoardModal);
   };
   return (
-    <SidebarMenu className="h-full p-2 flex flex-col items-center">
+    <SidebarMenu className="h-full p-2 flex flex-col gap-y-2 items-center">
       {Boards.map((board) => {
         const color = getRandomColor();
 
@@ -82,12 +82,17 @@ export const MainContent = ({ open }: Props) => {
               key={board.id}
               onClick={() => onClickHandler(board.id)}
               className={cn(
-                `${color}/60 p-1 w-full flex items-center justify-center rounded-md hover:${color} cursor-pointer transition`,
-                boardId === board.id && `${color}`
+                `bg-black p-1 w-full flex items-center justify-center rounded-sm  text-primary cursor-pointer transition`,
+                boardId === board.id && `${color} text-white`
               )}
             >
-              <SidebarIcon className="size-8" />
-              <p className={cn("flex-1 text-center", !open && "hidden")}>
+              <SidebarIcon className="size-6" />
+              <p
+                className={cn(
+                  "flex-1 text-center text-sm font-semibold",
+                  !open && "hidden"
+                )}
+              >
                 {board.title}
               </p>
             </SidebarMenuItem>
