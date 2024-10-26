@@ -1,8 +1,10 @@
 "use client";
 
-import { useGetBoards } from "@/features/boards/api/use-get-boards";
-import { Navbar } from "./_components/navbar";
 import { redirect } from "next/navigation";
+
+import { Navbar } from "./_components/navbar";
+import { ColumnContent } from "./_components/column-content";
+import { useGetBoards } from "@/features/boards/api/use-get-boards";
 
 const BoardIdPage = () => {
   const { data: Boards } = useGetBoards();
@@ -14,7 +16,7 @@ const BoardIdPage = () => {
   return (
     <div className="h-full w-full">
       <Navbar />
-      <div className="w-full h-[calc(100vh-56px)] p-2"></div>
+      <ColumnContent />
     </div>
   );
 };
