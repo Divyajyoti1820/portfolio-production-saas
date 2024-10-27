@@ -18,7 +18,7 @@ export const ColumnItem = () => {
       </div>
       <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
         <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(8)].map((_, i) => (
             <TaskItem key={i} />
           ))}
         </div>
