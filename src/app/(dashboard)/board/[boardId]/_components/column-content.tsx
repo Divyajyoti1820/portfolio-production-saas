@@ -1,33 +1,25 @@
 "use client";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
+import { ColumnItem } from "./column-item";
 
 export const ColumnContent = () => {
   const { open } = useSidebar();
   return (
     <ScrollArea
       className={cn(
-        "bg-black w-[calc(100vw-4rem)] h-[calc(100vh-3.5rem)] rounded-xl p-1",
-        open && "w-[calc(100vw-16rem)] whitespace-nowrap"
+        " w-[calc(100vw-4rem)]  h-[calc(100vh-3.5rem)]  p-1 overflow-x-auto",
+        open && "w-[calc(100vw-16rem)]"
       )}
     >
-      <div
-        className={cn(
-          "w-[calc(100vw-4rem)] h-[calc(100vh-4rem)] flex space-x-4",
-          open && "w-[calc(100vw-16rem)] whitespace-nowrap"
-        )}
-      >
-        {[...Array(8)].map((_, i) => (
-          <ScrollArea
-            key={i}
-            className="w-[260px] h-full bg-purple-600 rounded-xl shrink-0"
-          >
-            <div className="h-full w-[260px]"></div>
-          </ScrollArea>
+      <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex gap-x-3">
+        {[...Array(3)].map((_, i) => (
+          <ColumnItem key={i} />
         ))}
       </div>
+      <ScrollBar orientation="horizontal" />
     </ScrollArea>
   );
 };
