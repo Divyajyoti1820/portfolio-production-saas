@@ -103,15 +103,6 @@ export const Navbar = () => {
               )}
             </button>
           </Hint>
-          <Hint label="Delete Board" align="center" side="bottom">
-            <button
-              disabled={boardError}
-              onClick={deleteBoardHandler}
-              className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
-            >
-              <Trash2Icon className="size-5" />
-            </button>
-          </Hint>
           <Hint label="Edit Board" align="center" side="bottom">
             <button
               onClick={() => setOpenBoardUpdateModal(!openBoardUpdateModal)}
@@ -119,6 +110,15 @@ export const Navbar = () => {
               className="flex items-center justify-center gap-x-1 bg-primary p-1 rounded-md hover:bg-primary/50 transition"
             >
               <Edit2Icon className="size-5" />
+            </button>
+          </Hint>
+          <Hint label="Delete Board" align="center" side="bottom">
+            <button
+              disabled={boardError}
+              onClick={deleteBoardHandler}
+              className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
+            >
+              <Trash2Icon className="size-5" />
             </button>
           </Hint>
         </div>

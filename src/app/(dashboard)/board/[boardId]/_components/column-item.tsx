@@ -6,7 +6,7 @@ export const ColumnItem = () => {
   return (
     <div className="w-[260px] h-full  rounded-md">
       <div className="w-full px-1.5 h-10 flex items-center justify-between rounded-md mb-4">
-        <p className="text-sm font-semibold">Column Title</p>
+        <p className="text-md text-purple-500 font-bold ">Column Title</p>
         <div className="flex gap-x-1 items-center">
           <button className="text-white hover:text-primary disabled:text-primary/50 transition">
             <Edit2Icon className="size-4" />
@@ -18,7 +18,7 @@ export const ColumnItem = () => {
       </div>
       <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
         <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
-          {[...Array(8)].map((_, i) => (
+          {[...Array(4)].map((_, i) => (
             <TaskItem key={i} />
           ))}
         </div>
