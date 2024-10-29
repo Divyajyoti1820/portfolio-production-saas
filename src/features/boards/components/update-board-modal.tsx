@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { useUpdateBoard } from "@/features/boards/api/use-update-board";
 import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { useUpdateBoardModal } from "@/features/boards/store/use-update-board";
+import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-modal";
 
 export const UpdateBoardModal = () => {
   const boardId = useGetBoardId();

@@ -19,7 +19,7 @@ import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
-import { useUpdateBoardModal } from "@/features/boards/store/use-update-board";
+import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-modal";
 
 export const Navbar = () => {
   const router = useRouter();
