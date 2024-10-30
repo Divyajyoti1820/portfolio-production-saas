@@ -8,6 +8,7 @@ import authConfig from "@/auth.config";
 import users from "./users";
 import boards from "./boards";
 import columns from "./columns";
+import tasks from "./tasks";
 /* Major Routes */
 
 export const runtime = "nodejs";
@@ -28,7 +29,8 @@ app.use("*", initAuthConfig(getAuthConfig));
 const routes = app
   .route("/users", users)
   .route("/boards", boards)
-  .route("/columns", columns);
+  .route("/columns", columns)
+  .route("/tasks", tasks);
 
 export const GET = handle(app);
 export const POST = handle(app);
