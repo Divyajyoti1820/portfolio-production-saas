@@ -5,6 +5,7 @@ import { useDeleteColumn } from "@/features/columns/api/use-delete-column";
 import { toast } from "sonner";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useUpdateColumnModal } from "@/features/columns/store/use-update-column-modal";
+import { useGetColumnId } from "@/hooks/use-get-column-id";
 
 type Props = {
   data: { id: string; boardId: string; title: string };
@@ -12,6 +13,9 @@ type Props = {
 };
 
 export const ColumnItem = ({ data, boardId }: Props) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_columnId, setColumnId] = useGetColumnId();
+
   const [ConfirmationDialog, confirm] = useConfirmModal({
     title: "Are you sure?",
     message: "If you delete this column underlying all task will be deleted.",
@@ -37,7 +41,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
     );
   };
 
-  const { onOpen } = useUpdateColumnModal((state) => state);
+  const [openColumnModal, setOpenColumnModal] = useUpdateColumnModal();
 
   return (
     <div className="w-[260px] h-full  rounded-md">
@@ -48,7 +52,10 @@ export const ColumnItem = ({ data, boardId }: Props) => {
         </p>
         <div className="flex gap-x-1 items-center">
           <button
-            onClick={() => onOpen(data.id)}
+            onClick={() => {
+              setColumnId(data.id);
+              setOpenColumnModal(!openColumnModal);
+            }}
             className="text-white hover:text-primary disabled:text-primary/50 transition"
           >
             <Edit2Icon className="size-4" />

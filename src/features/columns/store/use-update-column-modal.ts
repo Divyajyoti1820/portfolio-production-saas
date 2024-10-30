@@ -1,15 +1,7 @@
-import { create } from "zustand";
+import { atom, useAtom } from "jotai";
 
-type state = {
-  id?: string;
-  isOpen: boolean;
-  onOpen: (id: string) => void;
-  onClose: () => void;
+const modalState = atom(false);
+
+export const useUpdateColumnModal = () => {
+  return useAtom(modalState);
 };
-
-export const useUpdateColumnModal = create<state>((set) => ({
-  id: undefined,
-  isOpen: false,
-  onOpen: (id: string) => set({ isOpen: true, id }),
-  onClose: () => set({ isOpen: false, id: undefined }),
-}));

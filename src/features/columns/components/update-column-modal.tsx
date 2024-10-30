@@ -20,13 +20,19 @@ import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useUpdateColumn } from "../api/use-update-column";
 import { toast } from "sonner";
 import { AlertOctagonIcon } from "lucide-react";
+import { useGetColumnId } from "@/hooks/use-get-column-id";
 
 export const UpdateColumnModal = () => {
-  const { id, isOpen, onClose } = useUpdateColumnModal((state) => state);
+  const [open, setOpen] = useUpdateColumnModal();
+
   const boardId = useGetBoardId();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [id, _setId] = useGetColumnId();
+
   const [title, setTitle] = useState<string>("");
 
   const { data, isLoading, isError } = useGetColumn(boardId, id!);
+  console.log(data);
 
   useEffect(() => {
     if (data) {
@@ -43,7 +49,7 @@ export const UpdateColumnModal = () => {
       {
         onSuccess: () => {
           toast.success("Column updated successfully");
-          onClose();
+          setOpen(false);
         },
         onError: () => {
           toast.error("Failed to update column");
@@ -54,7 +60,7 @@ export const UpdateColumnModal = () => {
 
   if (isError) {
     return (
-      <Dialog open={isOpen} onOpenChange={onClose}>
+      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="flex items-center justify-center">
           <AlertOctagonIcon className="size-8 text-destructive" />
           <p className="text-lg font-semibold text-destructive">
@@ -66,7 +72,7 @@ export const UpdateColumnModal = () => {
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Column</DialogTitle>
@@ -86,7 +92,7 @@ export const UpdateColumnModal = () => {
             <DialogClose>
               <Button
                 disabled={mutation.isPending}
-                onClick={onClose}
+                onClick={() => setOpen(false)}
                 className="bg-destructive hover:bg-destructive/50"
               >
                 Cancel
