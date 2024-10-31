@@ -31,8 +31,8 @@ export const ColumnContent = () => {
         )}
       >
         <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex gap-x-3">
-          {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="w-[260px] h-full bg-black" />
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="w-[260px] h-full bg-black/50" />
           ))}
         </div>
         <ScrollBar orientation="horizontal" />

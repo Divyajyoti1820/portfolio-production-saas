@@ -68,7 +68,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
           </button>
         </div>
       </div>
-      <TaskList />
+      <TaskList boardId={data.boardId} columnId={data.id} />
     </div>
   );
 };

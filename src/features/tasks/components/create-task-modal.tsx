@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/select";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,12 +24,16 @@ import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useGetColumns } from "@/features/columns/api/use-get-columns";
 import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
 import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useCreateTask } from "../api/use-create-task";
+import { toast } from "sonner";
 
 const MAX_SUBTASKS = 4;
 
 export const CreateTaskModal = () => {
   const boardId = useGetBoardId();
   const [open, setOpen] = useCreateTaskModal();
+
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [columnId, setColumnId] = useState<string>("");
@@ -42,6 +48,7 @@ export const CreateTaskModal = () => {
   const updateSubtask = (index: number, value: string) => {
     const updatedSubtasks = [...subtasks];
     updatedSubtasks[index] = { ...updatedSubtasks[index], title: value };
+    setSubtasks(updatedSubtasks);
   };
 
   const removeSubtask = (index: number) => {
@@ -52,12 +59,29 @@ export const CreateTaskModal = () => {
 
   const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
 
+  const mutation = useCreateTask(boardId);
   const createTaskHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    mutation.mutate(
+      { title, description, columnId, subtasks },
+      {
+        onSuccess: () => {
+          toast.success("Task create successfully");
+          setTitle("");
+          setDescription("");
+          setColumnId("");
+          setSubtasks([{ title: "", isCompleted: false }]);
+          setOpen(false);
+        },
+        onError: () => {
+          toast.error("Failed to create task");
+        },
+      }
+    );
   };
 
   return (
-    <Dialog open={open || true} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
@@ -72,6 +96,8 @@ export const CreateTaskModal = () => {
             <Label>Title</Label>
             <Input
               value={title}
+              disabled={mutation.isPending}
+              required
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Create a demo task"
             />
@@ -79,6 +105,7 @@ export const CreateTaskModal = () => {
           <div className="space-y-2">
             <Label>Description</Label>
             <Textarea
+              disabled={mutation.isPending}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Describe your task in your own words...."
@@ -92,7 +119,7 @@ export const CreateTaskModal = () => {
                 className="flex flex-row items-center justify-center gap-x-2"
               >
                 <Input
-                  disabled={false}
+                  disabled={mutation.isPending}
                   value={subtask.title}
                   onChange={(e) => updateSubtask(index, e.target.value)}
                   required
@@ -100,7 +127,7 @@ export const CreateTaskModal = () => {
                 />
                 {index !== 0 && (
                   <button
-                    disabled={false}
+                    disabled={mutation.isPending}
                     onClick={() => removeSubtask(index)}
                     className="p-2 bg-destructive  rounded-xl disabled:bg-destructive/40 hover:bg-destructive/40 transition"
                   >
@@ -110,7 +137,7 @@ export const CreateTaskModal = () => {
               </div>
             ))}
             <button
-              onClick={addSubtaskInput}
+              onClick={addSubtaskInput || mutation.isPending}
               disabled={subtasks.length === MAX_SUBTASKS}
               className="flex ml-auto items-center justify-center gap-x-1 text-xs bg-blue-700 p-1.5 rounded-md disabled:bg-blue-900 hover:bg-blue-900 transition"
             >
@@ -121,6 +148,7 @@ export const CreateTaskModal = () => {
           <div className="space-y-2">
             <Label>Column</Label>
             <Select
+              disabled={mutation.isPending}
               onValueChange={(value) => setColumnId(value)}
               defaultValue={columnId}
             >
@@ -148,6 +176,23 @@ export const CreateTaskModal = () => {
               </SelectContent>
             </Select>
           </div>
+          <DialogFooter>
+            <DialogClose>
+              <Button
+                disabled={mutation.isPending}
+                className="bg-destructive hover:bg-destructive/50 transition"
+              >
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button
+              disabled={mutation.isPending}
+              type="submit"
+              className="bg-primary hover:bg-primary/50 transition"
+            >
+              Create
+            </Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

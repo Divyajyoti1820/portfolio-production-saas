@@ -32,7 +32,6 @@ export const UpdateColumnModal = () => {
   const [title, setTitle] = useState<string>("");
 
   const { data, isLoading, isError } = useGetColumn(boardId, id!);
-  console.log(data);
 
   useEffect(() => {
     if (data) {
