@@ -210,14 +210,14 @@ const app = new Hono()
     }
   )
   .patch(
-    "/:id",
+    "/:columnId/:id",
     verifyAuth(),
-    zValidator("param", z.object({ id: z.string() })),
+    zValidator("param", z.object({ columnId: z.string(), id: z.string() })),
     zValidator(
       "json",
       z.object({
         boardId: z.string(),
-        columnId: z.string(),
+        newColumnId: z.string(),
         title: z.string().min(3),
         description: z.string(),
         subtasks: z.array(
@@ -230,8 +230,8 @@ const app = new Hono()
       if (!auth.token?.id) {
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
-      const { id } = c.req.valid("param");
-      const { boardId, columnId, title, description, subtasks } =
+      const { columnId, id } = c.req.valid("param");
+      const { boardId, newColumnId, title, description, subtasks } =
         c.req.valid("json");
 
       const board = await db
@@ -240,6 +240,14 @@ const app = new Hono()
         .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
       if (!board || board.length === 0) {
         return c.json({ error: "[TASK_GET] : Board not found" }, 400);
+      }
+
+      const newColumn = await db
+        .select({ id: columns.id })
+        .from(columns)
+        .where(and(eq(columns.boardId, boardId), eq(columns.id, newColumnId)));
+      if (!newColumn || newColumn.length === 0) {
+        return c.json({ error: "[TASK_GET] : Column not found" }, 400);
       }
 
       const column = await db
@@ -261,7 +269,7 @@ const app = new Hono()
         .set({
           title,
           description,
-          columnId,
+          columnId: newColumnId,
           subtasks,
         })
         .returning();
