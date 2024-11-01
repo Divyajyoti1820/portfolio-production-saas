@@ -7,6 +7,7 @@ import { UpdateBoardModal } from "@/features/boards/components/update-board-moda
 import { CreateColumnModal } from "@/features/columns/components/create-column-modal";
 import { UpdateColumnModal } from "@/features/columns/components/update-column-modal";
 import { CreateTaskModal } from "@/features/tasks/components/create-task-modal";
+import { UpdateTaskModal } from "@/features/tasks/components/update-task-modal";
 
 export const ModalsProvider = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -26,6 +27,7 @@ export const ModalsProvider = () => {
       <CreateColumnModal />
       <UpdateColumnModal />
       <CreateTaskModal />
+      <UpdateTaskModal />
     </>
   );
 };

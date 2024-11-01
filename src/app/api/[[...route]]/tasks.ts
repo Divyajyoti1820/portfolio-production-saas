@@ -168,19 +168,18 @@ const app = new Hono()
     }
   )
   .delete(
-    "/:boardId/:columnId/:id",
+    "/:id",
     verifyAuth(),
-    zValidator(
-      "param",
-      z.object({ boardId: z.string(), columnId: z.string(), id: z.string() })
-    ),
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator("json", z.object({ boardId: z.string(), columnId: z.string() })),
     async (c) => {
       const auth = c.get("authUser");
       if (!auth.token?.id) {
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
 
-      const { boardId, columnId, id } = c.req.valid("param");
+      const { id } = c.req.valid("param");
+      const { boardId, columnId } = c.req.valid("json");
 
       const board = await db
         .select({ id: boards.id })
@@ -205,6 +204,70 @@ const app = new Hono()
 
       if (!data || data.length === 0) {
         return c.json({ error: "[TASK_GET] : Task not found" }, 400);
+      }
+
+      return c.json({ data: data[0].id });
+    }
+  )
+  .patch(
+    "/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ id: z.string() })),
+    zValidator(
+      "json",
+      z.object({
+        boardId: z.string(),
+        columnId: z.string(),
+        title: z.string().min(3),
+        description: z.string(),
+        subtasks: z.array(
+          z.object({ title: z.string(), isCompleted: z.boolean() })
+        ),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+      const { id } = c.req.valid("param");
+      const { boardId, columnId, title, description, subtasks } =
+        c.req.valid("json");
+
+      const board = await db
+        .select({ id: boards.id })
+        .from(boards)
+        .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
+      if (!board || board.length === 0) {
+        return c.json({ error: "[TASK_GET] : Board not found" }, 400);
+      }
+
+      const column = await db
+        .select({ id: columns.id })
+        .from(columns)
+        .where(and(eq(columns.boardId, boardId), eq(columns.id, columnId)));
+      if (!column || column.length === 0) {
+        return c.json({ error: "[TASK_GET] : Column not found" }, 400);
+      }
+
+      const task = await db.select().from(tasks).where(eq(tasks.id, id));
+
+      if (!task || task.length === 0) {
+        return c.json({ error: "Failed to fetch task" }, 400);
+      }
+
+      const data = await db
+        .update(tasks)
+        .set({
+          title,
+          description,
+          columnId,
+          subtasks,
+        })
+        .returning();
+
+      if (!data || data.length === 0) {
+        return c.json({ error: "Failed to update board" }, 400);
       }
 
       return c.json({ data: data[0].id });

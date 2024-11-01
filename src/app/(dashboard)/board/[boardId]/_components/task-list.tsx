@@ -39,7 +39,7 @@ export const TaskList = ({ boardId, columnId }: Props) => {
   return (
     <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
       <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
-        {tasks?.map((task) => (
+        {tasks.map((task) => (
           <TaskItem key={task.id} data={task} boardId={boardId} />
         ))}
       </div>
