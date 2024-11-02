@@ -70,7 +70,7 @@ export const ColumnContent = () => {
         {ColumnData.length !== 5 && (
           <div
             onClick={() => setCreateColumnModal(!openCreateColumnModal)}
-            className="w-[260px] h-full flex flex-col items-center justify-center bg-black/60 hover:bg-black transition text-blue-500 cursor-pointer"
+            className="w-[260px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 hover:bg-black transition text-blue-500 cursor-pointer"
           >
             <PlusIcon className="size-8" />
             <p className="text-lg font-semibold">Add New Column</p>

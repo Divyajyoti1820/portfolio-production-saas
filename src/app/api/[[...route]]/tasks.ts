@@ -230,7 +230,9 @@ const app = new Hono()
       if (!auth.token?.id) {
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
+
       const { columnId, id } = c.req.valid("param");
+
       const { boardId, newColumnId, title, description, subtasks } =
         c.req.valid("json");
 
@@ -242,6 +244,15 @@ const app = new Hono()
         return c.json({ error: "[TASK_GET] : Board not found" }, 400);
       }
 
+      const column = await db
+        .select({ id: columns.id })
+        .from(columns)
+        .where(and(eq(columns.boardId, boardId), eq(columns.id, columnId)));
+
+      if (!column || column.length === 0) {
+        return c.json({ error: "[TASK_GET] : Column not found" }, 400);
+      }
+
       const newColumn = await db
         .select({ id: columns.id })
         .from(columns)
@@ -250,15 +261,10 @@ const app = new Hono()
         return c.json({ error: "[TASK_GET] : Column not found" }, 400);
       }
 
-      const column = await db
-        .select({ id: columns.id })
-        .from(columns)
-        .where(and(eq(columns.boardId, boardId), eq(columns.id, columnId)));
-      if (!column || column.length === 0) {
-        return c.json({ error: "[TASK_GET] : Column not found" }, 400);
-      }
-
-      const task = await db.select().from(tasks).where(eq(tasks.id, id));
+      const task = await db
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.columnId, columnId), eq(tasks.id, id)));
 
       if (!task || task.length === 0) {
         return c.json({ error: "Failed to fetch task" }, 400);
@@ -272,6 +278,7 @@ const app = new Hono()
           columnId: newColumnId,
           subtasks,
         })
+        .where(eq(tasks.id, id))
         .returning();
 
       if (!data || data.length === 0) {

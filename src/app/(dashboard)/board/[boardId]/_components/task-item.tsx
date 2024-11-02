@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useDeleteTask } from "@/features/tasks/api/use-delete-task";
+import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
+import { useShowTaskModal } from "@/features/tasks/store/use-show-task-modal";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
@@ -24,18 +25,22 @@ type Props = {
 };
 
 export const TaskItem = ({ data, boardId }: Props) => {
+  const [_taskId, setTaskId] = useGetTaskId();
+  const [_columnId, setColumnId] = useGetColumnId();
+
+  const [openUpdateTaskModal, setOpenUpdateTaskModal] = useUpdateTaskModal();
+  const [openShowTaskModal, setOpenShowTaskModal] = useShowTaskModal();
   const [ConfirmationDialog, confirm] = useConfirmModal({
     title: "Are you sure?",
     message:
       "You are going to delete this task. This action cannot be reversed all underlying data will be removed.",
   });
-  const [_taskId, setTaskId] = useGetTaskId();
-  const [_columnId, setColumnId] = useGetColumnId();
 
-  const removeTask = useDeleteTask(data.id, boardId, data.columnId);
   const { columnId } = data;
 
-  const useRemoveTaskHandler = async () => {
+  /* Remove Task Handler */
+  const removeTask = useRemoveTask(boardId, columnId, data.id);
+  const removeTaskHandler = async () => {
     const ok = await confirm();
     if (!ok) return;
 
@@ -52,13 +57,19 @@ export const TaskItem = ({ data, boardId }: Props) => {
       }
     );
   };
-
-  const [openUpdateTaskModal, setOpenUpdateTaskModal] = useUpdateTaskModal();
+  /* Remove Task Handler */
 
   return (
     <>
       <ConfirmationDialog />
-      <div className="w-full h-32 flex flex-row items-center justify-start rounded-md cursor-pointer p-3 bg-black/40 hover:bg-black transition">
+      <div
+        onClick={() => {
+          setTaskId(data.id);
+          setColumnId(data.columnId);
+          setOpenShowTaskModal(!openShowTaskModal);
+        }}
+        className="w-full h-32 flex flex-row items-center justify-start rounded-md cursor-pointer p-3 bg-black/40 hover:bg-black transition"
+      >
         <div className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center">
           <p className="text-sm text-indigo-500 font-bold">{data.title}</p>
           <p className="text-[10px] text-wrap text-muted-foreground">
@@ -73,7 +84,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
           <button
             onClick={() => {
               setTaskId(data.id);
-              setColumnId(columnId);
+              setColumnId(data.columnId);
               setOpenUpdateTaskModal(!openUpdateTaskModal);
             }}
             className="bg-blue-700 p-1 rounded-md hover:bg-blue-500 transition"
@@ -81,7 +92,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
             <EditIcon className="size-4" />
           </button>
           <button
-            onClick={useRemoveTaskHandler}
+            onClick={removeTaskHandler}
             className="bg-red-800 p-1 rounded-md hover:bg-destructive transition"
           >
             <TrashIcon className="size-4" />
