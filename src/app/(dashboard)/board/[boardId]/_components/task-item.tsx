@@ -62,15 +62,15 @@ export const TaskItem = ({ data, boardId }: Props) => {
   return (
     <>
       <ConfirmationDialog />
-      <div
-        onClick={() => {
-          setTaskId(data.id);
-          setColumnId(data.columnId);
-          setOpenShowTaskModal(!openShowTaskModal);
-        }}
-        className="w-full h-32 flex flex-row items-center justify-start rounded-md cursor-pointer p-3 bg-black/40 hover:bg-black transition"
-      >
-        <div className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center">
+      <div className="w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40 ">
+        <div
+          onClick={() => {
+            setTaskId(data.id);
+            setColumnId(data.columnId);
+            setOpenShowTaskModal(!openShowTaskModal);
+          }}
+          className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center p-2 hover:bg-black transition cursor-pointer"
+        >
           <p className="text-sm text-indigo-500 font-bold">{data.title}</p>
           <p className="text-[10px] text-wrap text-muted-foreground">
             {data.description.slice(0, 100)}.....

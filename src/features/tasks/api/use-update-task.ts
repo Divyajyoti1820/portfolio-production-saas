@@ -33,13 +33,15 @@ export const useUpdateTask = (
     },
 
     onSuccess: () => {
-      queryClient.refetchQueries({
+      queryClient.invalidateQueries();
+      queryClient.invalidateQueries({
         queryKey: ["tasks", { boardId, columnId }],
       });
-      queryClient.refetchQueries({
+      queryClient.invalidateQueries({
         queryKey: ["tasks", { boardId, nextColumnId }],
       });
       queryClient.invalidateQueries({ queryKey: ["tasks", { taskId }] });
+      queryClient.refetchQueries({ queryKey: ["board", { boardId }] });
     },
   });
 

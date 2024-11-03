@@ -38,7 +38,6 @@ import { useGetTask } from "../api/use-get-task";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
-
 const MAX_SUBTASKS = 4;
 
 export const UpdateTaskModal = () => {
@@ -46,7 +45,7 @@ export const UpdateTaskModal = () => {
   const boardId = useGetBoardId();
   const [presentColumnId, setPresentColumnId] = useGetColumnId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [taskId, _setTaskId] = useGetTaskId();
+  const [taskId, setTaskId] = useGetTaskId();
 
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
@@ -62,6 +61,8 @@ export const UpdateTaskModal = () => {
     isError: taskError,
   } = useGetTask(boardId, presentColumnId!, taskId!);
 
+  const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
+
   useEffect(() => {
     if (task) {
       setTitle(task.title);
@@ -69,7 +70,7 @@ export const UpdateTaskModal = () => {
       setColumnId(task.columnId);
       setSubtasks(task.subtasks);
     }
-  }, [task]);
+  }, [task, columns]);
   /* Fetching Data of the task */
 
   /* Subtask operation handler  */
@@ -87,8 +88,6 @@ export const UpdateTaskModal = () => {
   };
   /* Subtask operation handler  */
 
-  const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
-
   /* Update Task Handler */
   const mutation = useUpdateTask(boardId, presentColumnId!, columnId, taskId!);
 
@@ -101,13 +100,14 @@ export const UpdateTaskModal = () => {
           toast.success("Task updated successfully");
           setTitle("");
           setDescription("");
-
           setSubtasks([{ title: "", isCompleted: false }]);
           setPresentColumnId("");
+          setColumnId("");
+          setTaskId("");
           setOpen(false);
         },
         onError: () => {
-          toast.error("Failed to create task");
+          toast.error("Failed to update task");
         },
       }
     );
