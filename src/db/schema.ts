@@ -101,6 +101,8 @@ export const boards = pgTable("boards", {
   userId: text("userId")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp(),
 });
 
 export const boardRelations = relations(boards, ({ one, many }) => ({
@@ -119,6 +121,8 @@ export const columns = pgTable("columns", {
   boardId: text("boardId")
     .notNull()
     .references(() => boards.id, { onDelete: "cascade" }),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp(),
 });
 
 export const columnRelations = relations(columns, ({ one, many }) => ({
@@ -142,6 +146,8 @@ export const tasks = pgTable("tasks", {
     .$type<Array<{ title: string; isCompleted: boolean }>>()
     .notNull()
     .default([{ title: "subtask-1", isCompleted: false }]),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp(),
 });
 
 export const taskRelations = relations(tasks, ({ one }) => ({

@@ -6,7 +6,7 @@ import z from "zod";
 import { boards, columns } from "@/db/schema";
 import { verifyAuth } from "@hono/auth-js";
 import { db } from "@/db";
-import { and, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 
 const app = new Hono()
   .get(
@@ -37,7 +37,8 @@ const app = new Hono()
       const data = await db
         .select()
         .from(columns)
-        .where(eq(columns.boardId, boardId));
+        .where(eq(columns.boardId, boardId))
+        .orderBy(asc(columns.createdAt));
 
       if (!data || data.length === 0) {
         return c.json(

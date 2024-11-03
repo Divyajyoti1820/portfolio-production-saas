@@ -59,6 +59,12 @@ export const TaskItem = ({ data, boardId }: Props) => {
   };
   /* Remove Task Handler */
 
+  /* No. of completed Subtask */
+  const completedSubtaskCount = data.subtasks.filter(
+    (subtask) => subtask.isCompleted
+  ).length;
+  /* No. of completed Subtask */
+
   return (
     <>
       <ConfirmationDialog />
@@ -76,7 +82,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
             {data.description.slice(0, 100)}.....
           </p>
           <p className="text-xs">
-            0 of {data.subtasks.length}{" "}
+            {completedSubtaskCount} of {data.subtasks.length}{" "}
             <span className="text-blue-500 font-medium">Subtasks</span>
           </p>
         </div>

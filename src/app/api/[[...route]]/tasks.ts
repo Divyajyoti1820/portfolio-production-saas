@@ -6,7 +6,7 @@ import z from "zod";
 import { boards, columns, tasks } from "@/db/schema";
 import { verifyAuth } from "@hono/auth-js";
 import { db } from "@/db";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 const app = new Hono()
   .post(
@@ -111,7 +111,8 @@ const app = new Hono()
       const data = await db
         .select()
         .from(tasks)
-        .where(eq(tasks.columnId, columnId));
+        .where(eq(tasks.columnId, columnId))
+        .orderBy(desc(tasks.createdAt));
 
       if (!data) {
         return c.json({ error: "[TASKS_GET] : Failed to get tasks" }, 400);
