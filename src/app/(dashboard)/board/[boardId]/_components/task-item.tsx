@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
+import { useCopyTask } from "@/features/tasks/api/use-copy-task";
 import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
 import { useShowTaskModal } from "@/features/tasks/store/use-show-task-modal";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
-import { EditIcon, TrashIcon } from "lucide-react";
+import { CopyIcon, EditIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
 
 type Props = {
@@ -59,6 +60,23 @@ export const TaskItem = ({ data, boardId }: Props) => {
   };
   /* Remove Task Handler */
 
+  /* Copy Task Handler */
+  const copyTask = useCopyTask(boardId, data.columnId, data.id);
+  const copyTaskHandler = () => {
+    copyTask.mutate(
+      { boardId },
+      {
+        onSuccess: () => {
+          toast.success("Task copied successfully");
+        },
+        onError: () => {
+          toast.error("Failed to copy task");
+        },
+      }
+    );
+  };
+  /* Copy Task Handler */
+
   /* No. of completed Subtask */
   const completedSubtaskCount = data.subtasks.filter(
     (subtask) => subtask.isCompleted
@@ -87,6 +105,13 @@ export const TaskItem = ({ data, boardId }: Props) => {
           </p>
         </div>
         <div className="h-full w-[15%] flex flex-col items-center justify-center gap-y-3">
+          <button
+            disabled={copyTask.isPending}
+            onClick={copyTaskHandler}
+            className="bg-green-500 p-1 rounded-md hover:bg-green-500/50 transition"
+          >
+            <CopyIcon className="size-4" />
+          </button>
           <button
             onClick={() => {
               setTaskId(data.id);

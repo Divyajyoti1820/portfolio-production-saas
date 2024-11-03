@@ -63,7 +63,7 @@ export const ShowTaskModal = () => {
     setSubtasks(updatedSubtasks);
   };
 
-  const mutation = useUpdateSubtask(columnId!, taskId!);
+  const mutation = useUpdateSubtask(boardId, columnId!, taskId!);
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
