@@ -20,33 +20,24 @@ import { Separator } from "@/components/ui/separator";
 import { AlertOctagonIcon } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useUpdateSubtask } from "../api/use-update-subtask";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { useGetColumn } from "@/features/columns/api/use-get-column";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const ShowTaskModal = () => {
   const [open, setOpen] = useShowTaskModal();
   const boardId = useGetBoardId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [columnId, _setColumnId] = useGetColumnId();
+  const [columnId, setColumnId] = useGetColumnId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [taskId, _setTaskId] = useGetTaskId();
-
+  const [taskId, setTaskId] = useGetTaskId();
   const [subtasks, setSubtasks] = useState<
     { title: string; isCompleted: boolean }[]
   >([]);
-
-  const addSubtaskInput = () => {
-    setSubtasks([...subtasks, { title: "", isCompleted: false }]);
-  };
-
-  const updateSubtaskStatus = (index: number, isCompleted: boolean) => {
-    const updatedSubtasks = [...subtasks];
-    updatedSubtasks[index] = { ...updatedSubtasks[index], isCompleted };
-    setSubtasks(updatedSubtasks);
-  };
-
-  const removeSubtask = (index: number) => {
-    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
-    setSubtasks(updatedSubtasks);
-  };
 
   const {
     data: task,
@@ -54,11 +45,44 @@ export const ShowTaskModal = () => {
     isError: taskError,
   } = useGetTask(boardId, columnId!, taskId!);
 
+  const {
+    data: column,
+    isLoading: columnIsLoading,
+    isError: columnError,
+  } = useGetColumn(boardId, columnId!);
+
   useEffect(() => {
     if (task) {
       setSubtasks(task.subtasks);
     }
   }, [task]);
+
+  const updateSubtaskStatus = (index: number, isCompleted: boolean) => {
+    const updatedSubtasks = [...subtasks];
+    updatedSubtasks[index] = { ...updatedSubtasks[index], isCompleted };
+    setSubtasks(updatedSubtasks);
+  };
+
+  const mutation = useUpdateSubtask(columnId!, taskId!);
+  const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    mutation.mutate(
+      { boardId, subtasks },
+      {
+        onSuccess: () => {
+          toast.success("Progress updated successfully");
+          setSubtasks([]);
+          setColumnId("");
+          setTaskId("");
+          setOpen(false);
+        },
+        onError: () => {
+          toast.error("Failed to update progress");
+        },
+      }
+    );
+  };
 
   if (taskLoading) {
     return (
@@ -80,7 +104,7 @@ export const ShowTaskModal = () => {
     );
   }
 
-  if (!task || taskError) {
+  if (!task || taskError || columnError) {
     return (
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent>
@@ -104,17 +128,54 @@ export const ShowTaskModal = () => {
           <DialogTitle>{task?.title}</DialogTitle>
           <DialogDescription>{task?.description}</DialogDescription>
         </DialogHeader>
-        <form onSubmit={() => {}} className="space-y-2">
+        {columnIsLoading ? (
+          <div className="flex flex-col gap-y-2">
+            <Label>Column</Label>
+            <Skeleton className="w-full h-8 rounded-md" />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-y-2">
+            <Label>Column</Label>
+            <Input value={column?.title} disabled className="bg-black" />
+          </div>
+        )}
+
+        <form onSubmit={onSubmitHandler} className="space-y-2">
           <Label>Subtasks</Label>
           {subtasks.map((subtask, index) => (
             <div
               key={index}
-              className="w-full flex items-center justify-between flex-row bg-black/60 p-2"
+              className={cn(
+                "w-full flex items-center justify-between flex-row bg-black/30 hover:bg-black p-2 rounded-md transition",
+                subtask.isCompleted && "bg-black"
+              )}
             >
-              <p className="text-sm flex-1">{subtask.title}</p>
-              <input type="checkbox" className="" />
+              <Label
+                htmlFor={subtask.title}
+                className={cn(
+                  "text-sm flex-1 cursor-pointer",
+                  subtask.isCompleted && "line-through"
+                )}
+              >
+                {subtask.title}
+              </Label>
+              <Checkbox
+                id={subtask.title}
+                defaultChecked={subtask.isCompleted}
+                onCheckedChange={(checked: boolean) =>
+                  updateSubtaskStatus(index, checked)
+                }
+              />
             </div>
           ))}
+          <DialogFooter>
+            <DialogClose>
+              <Button className="bg-destructive hover:bg-destructive/50 transition">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit">Update Subtask</Button>
+          </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>

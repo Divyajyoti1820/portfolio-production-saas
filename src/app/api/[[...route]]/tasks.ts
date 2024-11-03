@@ -287,6 +287,70 @@ const app = new Hono()
 
       return c.json({ data: data[0].id });
     }
+  )
+  .patch(
+    "subtasks/:columnId/:id",
+    verifyAuth(),
+    zValidator("param", z.object({ columnId: z.string(), id: z.string() })),
+    zValidator(
+      "json",
+      z.object({
+        boardId: z.string(),
+        subtasks: z.array(
+          z.object({ title: z.string(), isCompleted: z.boolean() })
+        ),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { columnId, id } = c.req.valid("param");
+
+      const { boardId, subtasks } = c.req.valid("json");
+
+      const board = await db
+        .select({ id: boards.id })
+        .from(boards)
+        .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
+      if (!board || board.length === 0) {
+        return c.json({ error: "[TASK_GET] : Board not found" }, 400);
+      }
+
+      const column = await db
+        .select({ id: columns.id })
+        .from(columns)
+        .where(and(eq(columns.boardId, boardId), eq(columns.id, columnId)));
+
+      if (!column || column.length === 0) {
+        return c.json({ error: "[TASK_GET] : Column not found" }, 400);
+      }
+
+      const task = await db
+        .select()
+        .from(tasks)
+        .where(and(eq(tasks.columnId, columnId), eq(tasks.id, id)));
+
+      if (!task || task.length === 0) {
+        return c.json({ error: "Failed to fetch task" }, 400);
+      }
+
+      const data = await db
+        .update(tasks)
+        .set({
+          subtasks,
+        })
+        .where(eq(tasks.id, id))
+        .returning();
+
+      if (!data || data.length === 0) {
+        return c.json({ error: "Failed to update board" }, 400);
+      }
+
+      return c.json({ data: data[0].id });
+    }
   );
 
 export default app;
