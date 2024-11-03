@@ -7,6 +7,8 @@ import authConfig from "@/auth.config";
 /* Major Routes */
 import users from "./users";
 import boards from "./boards";
+import columns from "./columns";
+import tasks from "./tasks";
 /* Major Routes */
 
 export const runtime = "nodejs";
@@ -24,7 +26,11 @@ const app = new Hono().basePath("/api");
 
 app.use("*", initAuthConfig(getAuthConfig));
 
-const routes = app.route("/users", users).route("/boards", boards);
+const routes = app
+  .route("/users", users)
+  .route("/boards", boards)
+  .route("/columns", columns)
+  .route("/tasks", tasks);
 
 export const GET = handle(app);
 export const POST = handle(app);

@@ -19,12 +19,15 @@ import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
-import { useUpdateBoardModal } from "@/features/boards/store/use-update-board";
+import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-modal";
+import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
 
 export const Navbar = () => {
   const router = useRouter();
   const isBreakpoint = useMediaQuery("(max-width:1080px)");
   const boardId = useGetBoardId();
+  const [openCreateTaskModal, setOpenCreateTaskModal] = useCreateTaskModal();
+
   const { data: Boards } = useGetBoards();
   const [openBoardUpdateModal, setOpenBoardUpdateModal] = useUpdateBoardModal();
   const [ConfirmationModal, confirm] = useConfirmModal({
@@ -95,21 +98,13 @@ export const Navbar = () => {
           >
             <button
               disabled={boardError}
+              onClick={() => setOpenCreateTaskModal(!openCreateTaskModal)}
               className="flex items-center justify-center gap-x-1 bg-teal-500 p-1 rounded-md hover:bg-teal-500/50 transition"
             >
               <PlusSquareIcon className="size-5" />
               {!isBreakpoint && (
                 <p className="text-xs font-semibold">Create new task</p>
               )}
-            </button>
-          </Hint>
-          <Hint label="Delete Board" align="center" side="bottom">
-            <button
-              disabled={boardError}
-              onClick={deleteBoardHandler}
-              className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
-            >
-              <Trash2Icon className="size-5" />
             </button>
           </Hint>
           <Hint label="Edit Board" align="center" side="bottom">
@@ -119,6 +114,15 @@ export const Navbar = () => {
               className="flex items-center justify-center gap-x-1 bg-primary p-1 rounded-md hover:bg-primary/50 transition"
             >
               <Edit2Icon className="size-5" />
+            </button>
+          </Hint>
+          <Hint label="Delete Board" align="center" side="bottom">
+            <button
+              disabled={boardError}
+              onClick={deleteBoardHandler}
+              className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
+            >
+              <Trash2Icon className="size-5" />
             </button>
           </Hint>
         </div>

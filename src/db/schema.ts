@@ -6,6 +6,7 @@ import {
   text,
   primaryKey,
   integer,
+  jsonb,
 } from "drizzle-orm/pg-core";
 
 import type { AdapterAccountType } from "next-auth/adapters";
@@ -120,9 +121,32 @@ export const columns = pgTable("columns", {
     .references(() => boards.id, { onDelete: "cascade" }),
 });
 
-export const columnRelations = relations(columns, ({ one }) => ({
+export const columnRelations = relations(columns, ({ one, many }) => ({
   board: one(boards, {
     fields: [columns.boardId],
     references: [boards.id],
+  }),
+  tasks: many(tasks),
+}));
+
+export const tasks = pgTable("tasks", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  columnId: text("columnId")
+    .notNull()
+    .references(() => columns.id, { onDelete: "cascade" }),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  subtasks: jsonb("subtasks")
+    .$type<Array<{ title: string; isCompleted: boolean }>>()
+    .notNull()
+    .default([{ title: "subtask-1", isCompleted: false }]),
+});
+
+export const taskRelations = relations(tasks, ({ one }) => ({
+  column: one(columns, {
+    fields: [tasks.columnId],
+    references: [columns.id],
   }),
 }));

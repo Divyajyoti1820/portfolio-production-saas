@@ -1,3 +1,5 @@
+"use client";
+
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { MainSidebar } from "./_components/main-sidebar";
 
