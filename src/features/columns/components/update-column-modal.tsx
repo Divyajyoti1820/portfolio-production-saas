@@ -48,6 +48,7 @@ export const UpdateColumnModal = () => {
       {
         onSuccess: () => {
           toast.success("Column updated successfully");
+          setTitle("");
           setOpen(false);
         },
         onError: () => {
@@ -55,6 +56,11 @@ export const UpdateColumnModal = () => {
         },
       }
     );
+  };
+
+  const handleClose = () => {
+    setTitle("");
+    setOpen(false);
   };
 
   if (isError) {
@@ -71,7 +77,7 @@ export const UpdateColumnModal = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Column</DialogTitle>

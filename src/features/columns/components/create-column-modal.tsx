@@ -43,8 +43,13 @@ export const CreateColumnModal = () => {
     );
   };
 
+  const handleClose = () => {
+    setTitle("");
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Column</DialogTitle>

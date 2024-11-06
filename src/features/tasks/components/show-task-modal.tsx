@@ -84,9 +84,14 @@ export const ShowTaskModal = () => {
     );
   };
 
+  const handleClose = () => {
+    setSubtasks([]);
+    setOpen(false);
+  };
+
   if (taskLoading) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <Separator className="h-6 w-[400px] rounded-sm bg-black/70" />

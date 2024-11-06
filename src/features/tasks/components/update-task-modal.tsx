@@ -116,9 +116,19 @@ export const UpdateTaskModal = () => {
   };
   /* Update Task Handler */
 
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setPresentColumnId("");
+    setColumnId("");
+    setTaskId("");
+    setOpen(false);
+  };
+
   if (taskLoading) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Task</DialogTitle>

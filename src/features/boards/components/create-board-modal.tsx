@@ -66,8 +66,14 @@ export const CreateBoardModal = () => {
   };
   /* Create board Form Handler */
 
+  const removeHandler = () => {
+    setTitle("");
+    setColumns([""]);
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={removeHandler}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Board</DialogTitle>

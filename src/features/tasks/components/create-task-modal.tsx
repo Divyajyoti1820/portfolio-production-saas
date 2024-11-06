@@ -83,8 +83,16 @@ export const CreateTaskModal = () => {
   };
   /* Create Task Handler */
 
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setColumnId("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>
