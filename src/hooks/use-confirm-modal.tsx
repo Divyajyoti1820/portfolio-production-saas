@@ -1,14 +1,16 @@
 import { useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { AlertTriangleIcon } from "lucide-react";
 
 type Props = {
   title: string;
@@ -44,28 +46,31 @@ export const useConfirmModal = ({
   };
 
   const ConfirmationDialog = () => (
-    <Dialog open={promise !== null} onOpenChange={handleCancel}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{message}</DialogDescription>
-        </DialogHeader>
-        <DialogFooter className="pt-2">
-          <Button
+    <AlertDialog open={promise !== null} onOpenChange={handleCancel}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="flex flex-col gap-y-3">
+            <AlertTriangleIcon className="size-10 text-red-600" />
+            {title}
+          </AlertDialogTitle>
+          <AlertDialogDescription>{message}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel
             onClick={handleCancel}
-            className="bg-secondary text-primary hover:bg-secondary/50 transition"
+            className="bg-black hover:bg-black/50"
           >
             Cancel
-          </Button>
-          <Button
+          </AlertDialogCancel>
+          <AlertDialogAction
             onClick={handleConfirm}
-            className="bg-destructive text-white hover:bg-destructive/50 transition"
+            className="bg-destructive hover:bg-destructive/50"
           >
-            Delete
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+            Remove
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 
   return [ConfirmationDialog, confirm];

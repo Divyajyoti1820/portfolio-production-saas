@@ -86,7 +86,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
   return (
     <>
       <ConfirmationDialog />
-      <div className="w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40 ">
+      <div className="w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-4 border-blue-500">
         <div
           onClick={() => {
             setTaskId(data.id);

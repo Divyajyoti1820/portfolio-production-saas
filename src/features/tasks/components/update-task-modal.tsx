@@ -120,9 +120,6 @@ export const UpdateTaskModal = () => {
     setTitle("");
     setDescription("");
     setSubtasks([{ title: "", isCompleted: false }]);
-    setPresentColumnId("");
-    setColumnId("");
-    setTaskId("");
     setOpen(false);
   };
 

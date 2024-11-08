@@ -11,13 +11,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
 import { useCreateColumnModal } from "@/features/columns/store/use-create-column-modal";
 import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { useCreateColumn } from "../api/use-create-column";
-import { toast } from "sonner";
+import { useCreateColumn } from "@/features/columns/api/use-create-column";
 
 export const CreateColumnModal = () => {
   const [open, setOpen] = useCreateColumnModal();

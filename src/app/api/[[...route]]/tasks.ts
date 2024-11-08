@@ -20,7 +20,6 @@ const app = new Hono()
         description: z
           .optional(z.string())
           .default("You can add description for"),
-
         columnId: z.string(),
         subtasks: z.array(
           z.object({

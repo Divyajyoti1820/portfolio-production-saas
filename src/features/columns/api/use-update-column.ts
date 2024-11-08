@@ -29,8 +29,9 @@ export const useUpdateColumn = (id: string, boardId: string) => {
       return await response.json();
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["column", { boardId, id }] });
+      queryClient.invalidateQueries({ queryKey: ["columns", { boardId }] });
       queryClient.invalidateQueries({ queryKey: ["boards"] });
-      queryClient.invalidateQueries({ queryKey: ["column", { boardId }] });
     },
   });
 
