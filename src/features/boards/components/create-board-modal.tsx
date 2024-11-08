@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { MAX_COLUMNS } from "@/lib/constants";
+
 import {
   Dialog,
   DialogClose,
@@ -20,8 +22,6 @@ import { useCreateBoardModal } from "@/features/boards/store/use-create-board-mo
 import { useCreateBoard } from "../api/use-create-board";
 import { PlusIcon, TrashIcon } from "lucide-react";
 import { toast } from "sonner";
-
-const MAX_COLS = 5;
 
 export const CreateBoardModal = () => {
   const router = useRouter();
@@ -66,8 +66,14 @@ export const CreateBoardModal = () => {
   };
   /* Create board Form Handler */
 
+  const removeHandler = () => {
+    setTitle("");
+    setColumns([""]);
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={removeHandler}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Board</DialogTitle>
@@ -115,7 +121,7 @@ export const CreateBoardModal = () => {
             ))}
             <button
               onClick={addColumnInput}
-              disabled={columns.length === MAX_COLS || mutation.isPending}
+              disabled={columns.length === MAX_COLUMNS || mutation.isPending}
               className="flex ml-auto items-center justify-center gap-x-1 text-xs bg-blue-700 p-1.5 rounded-md disabled:bg-blue-900 hover:bg-blue-900 transition"
             >
               <PlusIcon className="size-4" />

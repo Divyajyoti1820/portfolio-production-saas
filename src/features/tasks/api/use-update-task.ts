@@ -40,8 +40,9 @@ export const useUpdateTask = (
       queryClient.invalidateQueries({
         queryKey: ["tasks", { boardId, nextColumnId }],
       });
-      queryClient.invalidateQueries({ queryKey: ["tasks", { taskId }] });
-      queryClient.refetchQueries({ queryKey: ["board", { boardId }] });
+      queryClient.invalidateQueries({ queryKey: ["task", { taskId }] });
+      queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
+      queryClient.refetchQueries({ queryKey: ["task", { taskId }] });
     },
   });
 

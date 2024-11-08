@@ -18,6 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,11 +34,12 @@ import {
 
 import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useGetColumns } from "@/features/columns/api/use-get-columns";
-import { useUpdateTask } from "../api/use-update-task";
-import { useGetTask } from "../api/use-get-task";
+import { useUpdateTask } from "@/features/tasks/api/use-update-task";
+import { useGetTask } from "@/features/tasks/api/use-get-task";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
+
 const MAX_SUBTASKS = 4;
 
 export const UpdateTaskModal = () => {
@@ -114,9 +116,16 @@ export const UpdateTaskModal = () => {
   };
   /* Update Task Handler */
 
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setOpen(false);
+  };
+
   if (taskLoading) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Task</DialogTitle>

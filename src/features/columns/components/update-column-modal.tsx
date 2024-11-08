@@ -14,13 +14,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import { useGetColumnId } from "@/hooks/use-get-column-id";
+import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useUpdateColumnModal } from "@/features/columns/store/use-update-column-modal";
 import { useGetColumn } from "@/features/columns/api/use-get-column";
-import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { useUpdateColumn } from "../api/use-update-column";
+import { useUpdateColumn } from "@/features/columns/api/use-update-column";
+
 import { toast } from "sonner";
+
 import { AlertOctagonIcon } from "lucide-react";
-import { useGetColumnId } from "@/hooks/use-get-column-id";
 
 export const UpdateColumnModal = () => {
   const [open, setOpen] = useUpdateColumnModal();
@@ -48,6 +51,7 @@ export const UpdateColumnModal = () => {
       {
         onSuccess: () => {
           toast.success("Column updated successfully");
+          setTitle("");
           setOpen(false);
         },
         onError: () => {
@@ -55,6 +59,11 @@ export const UpdateColumnModal = () => {
         },
       }
     );
+  };
+
+  const handleClose = () => {
+    setTitle("");
+    setOpen(false);
   };
 
   if (isError) {
@@ -71,7 +80,7 @@ export const UpdateColumnModal = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Column</DialogTitle>

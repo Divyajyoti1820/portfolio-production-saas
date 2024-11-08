@@ -10,6 +10,7 @@ import { useGetColumns } from "@/features/columns/api/use-get-columns";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertOctagonIcon, PlusIcon } from "lucide-react";
 import { useCreateColumnModal } from "@/features/columns/store/use-create-column-modal";
+import { MAX_COLUMNS } from "@/lib/constants";
 
 export const ColumnContent = () => {
   const { open } = useSidebar();
@@ -67,13 +68,13 @@ export const ColumnContent = () => {
         {ColumnData.map((column) => (
           <ColumnItem key={column.id} data={column} boardId={boardId} />
         ))}
-        {ColumnData.length !== 5 && (
+        {ColumnData.length !== MAX_COLUMNS && (
           <div
             onClick={() => setCreateColumnModal(!openCreateColumnModal)}
-            className="w-[260px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 hover:bg-black transition text-blue-500 cursor-pointer"
+            className="w-[180px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 rounded-md hover:bg-black transition text-blue-500 cursor-pointer"
           >
             <PlusIcon className="size-8" />
-            <p className="text-lg font-semibold">Add New Column</p>
+            <p className="text-md font-semibold">Add New Column</p>
           </div>
         )}
       </div>

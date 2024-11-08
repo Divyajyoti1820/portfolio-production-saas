@@ -43,6 +43,7 @@ export const UpdateBoardModal = () => {
       {
         onSuccess: () => {
           toast.success("Board updated successfully");
+          setTitle("");
           setOpen(false);
         },
         onError: () => {
@@ -52,8 +53,13 @@ export const UpdateBoardModal = () => {
     );
   };
 
+  const removeHandler = () => {
+    setTitle("");
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={removeHandler}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Board Title</DialogTitle>

@@ -1,18 +1,17 @@
-import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { client } from "@/lib/hono";
 import { InferRequestType, InferResponseType } from "hono";
 
 type RequestType = InferRequestType<
-  (typeof client.api.tasks)["subtasks"][":columnId"][":id"]["$patch"]
+  (typeof client.api.tasks)["copy"][":columnId"][":id"]["$post"]
 >["json"];
 
 type ResponseType = InferResponseType<
-  (typeof client.api.tasks)["subtasks"][":columnId"][":id"]["$patch"],
+  (typeof client.api.tasks)["copy"][":columnId"][":id"]["$post"],
   200
 >;
 
-export const useUpdateSubtask = (
+export const useCopyTask = (
   boardId: string,
   columnId: string,
   taskId: string
@@ -20,12 +19,12 @@ export const useUpdateSubtask = (
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async (json) => {
-      const response = await client.api.tasks["subtasks"][":columnId"][
-        ":id"
-      ].$patch({
-        param: { columnId, id: taskId },
-        json,
-      });
+      const response = await client.api.tasks["copy"][":columnId"][":id"].$post(
+        {
+          param: { columnId, id: taskId },
+          json,
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Something went wrong");
@@ -33,9 +32,7 @@ export const useUpdateSubtask = (
 
       return await response.json();
     },
-
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["task", { taskId }] });
       queryClient.invalidateQueries({
         queryKey: ["tasks", { boardId, columnId }],
       });

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { MAX_SUBTASKS } from "@/lib/constants";
+
 import {
   Select,
   SelectContent,
@@ -30,8 +32,6 @@ import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useGetColumns } from "@/features/columns/api/use-get-columns";
 import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
 import { useCreateTask } from "../api/use-create-task";
-
-const MAX_SUBTASKS = 4;
 
 export const CreateTaskModal = () => {
   const boardId = useGetBoardId();
@@ -83,8 +83,16 @@ export const CreateTaskModal = () => {
   };
   /* Create Task Handler */
 
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setColumnId("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setOpen(false);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>

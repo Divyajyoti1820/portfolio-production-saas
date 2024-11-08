@@ -29,6 +29,13 @@
       "when": 1730270033782,
       "tag": "0003_robust_swordsman",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1730632865353,
+      "tag": "0004_furry_black_widow",
+      "breakpoints": true
     }
   ]
 }

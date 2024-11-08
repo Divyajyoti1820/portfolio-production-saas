@@ -42,7 +42,7 @@ export const SignUpCard = () => {
   /* Credentials SignUp Handler */
   const CredentialsSignUpHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (password === confirmPassword) {
+    if (password !== confirmPassword) {
       toast.error("Passwords not same");
       return;
     }
@@ -56,6 +56,9 @@ export const SignUpCard = () => {
             redirectTo: "/",
           });
           toast.success("User Registered successfully");
+        },
+        onError: () => {
+          toast.error("Something went wrong");
         },
       }
     );

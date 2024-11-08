@@ -27,7 +27,7 @@ export const useCreateColumn = (boardId: string) => {
 
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
-      queryClient.invalidateQueries({ queryKey: ["column", { boardId }] });
+      queryClient.invalidateQueries({ queryKey: ["columns", { boardId }] });
     },
   });
 

@@ -4,14 +4,18 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
-import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
-import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { AlertCircleIcon, PlusCircleIcon, SidebarIcon } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useCreateBoardModal } from "@/features/boards/store/use-create-board-modal";
-import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { getRandomColor } from "@/features/boards/utils";
+
 import { Hint } from "@/components/hint";
+import { Skeleton } from "@/components/ui/skeleton";
+import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
+
+import { useGetBoardId } from "@/hooks/use-get-board-id";
+import { useGetBoards } from "@/features/boards/api/use-get-boards";
+import { getRandomColor } from "@/features/boards/utils";
+import { useCreateBoardModal } from "@/features/boards/store/use-create-board-modal";
+
+import { MAX_BOARDS } from "@/lib/constants";
 
 type Props = {
   open: boolean;
@@ -101,7 +105,7 @@ export const MainContent = ({ open }: Props) => {
       })}
       <Hint hide={open} label="Add New Board" align="center" side="right">
         <button
-          disabled={Boards.length === 5}
+          disabled={Boards.length === MAX_BOARDS}
           onClick={createBoardModalHandler}
           className={cn(
             "flex w-full items-center justify-center p-2 mt-3 text-blue-500 bg-black rounded-xl hover:bg-black/50 transition"
