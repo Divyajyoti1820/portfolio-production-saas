@@ -68,7 +68,11 @@ export const SignInCard = () => {
         {!!error && (
           <div className="w-full flex items-center justify-center gap-x-2 p-2 bg-destructive text-sm text-white rounded-sm ">
             <AlertTriangleIcon className="size-4" />
-            <p>Something went wrong</p>
+            <p>
+              {error === "CredentialsSignin"
+                ? "Invalid Credentials"
+                : "Something went wrong"}
+            </p>
           </div>
         )}
         <form onSubmit={CredentialsSignInHandler} className="space-y-2.5">

@@ -1,15 +1,24 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useCopyTask } from "@/features/tasks/api/use-copy-task";
-import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
-import { useShowTaskModal } from "@/features/tasks/store/use-show-task-modal";
-import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
+
+import { useCopyTask } from "@/features/tasks/api/use-copy-task";
+import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
+import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
+import { useShowTaskModal } from "@/features/tasks/store/use-show-task-modal";
+
+import {
+  GetRandomBorderColor,
+  CapitalizeFirstLetter,
+} from "@/features/tasks/utils";
+
 import { CopyIcon, EditIcon, TrashIcon } from "lucide-react";
+
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
 type Props = {
   data: {
@@ -83,10 +92,17 @@ export const TaskItem = ({ data, boardId }: Props) => {
   ).length;
   /* No. of completed Subtask */
 
+  const borderColor = GetRandomBorderColor();
+
   return (
     <>
       <ConfirmationDialog />
-      <div className="w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-4 border-blue-500">
+      <div
+        className={cn(
+          "w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-2",
+          borderColor
+        )}
+      >
         <div
           onClick={() => {
             setTaskId(data.id);
@@ -95,9 +111,13 @@ export const TaskItem = ({ data, boardId }: Props) => {
           }}
           className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center p-2 hover:bg-black transition cursor-pointer"
         >
-          <p className="text-sm text-indigo-500 font-bold">{data.title}</p>
+          <p className="text-sm text-indigo-500 font-bold">
+            {data.title.length > 25
+              ? `${CapitalizeFirstLetter(data.title.slice(0, 24))}...`
+              : `${CapitalizeFirstLetter(data.title)}`}
+          </p>
           <p className="text-[10px] text-wrap text-muted-foreground">
-            {data.description.slice(0, 100)}.....
+            {CapitalizeFirstLetter(data.description.slice(0, 100))}.....
           </p>
           <p className="text-xs">
             {completedSubtaskCount} of {data.subtasks.length}{" "}
