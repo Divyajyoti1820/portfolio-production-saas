@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { create } from "mutative";
+
 import { MAX_COLUMNS } from "@/lib/constants";
 
 import {
@@ -14,14 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { useCreateBoardModal } from "@/features/boards/store/use-create-board-modal";
-import { useCreateBoard } from "../api/use-create-board";
+import { useCreateBoard } from "@/features/boards/api/use-create-board";
+
 import { PlusIcon, TrashIcon } from "lucide-react";
-import { toast } from "sonner";
 
 export const CreateBoardModal = () => {
   const router = useRouter();
@@ -30,12 +33,19 @@ export const CreateBoardModal = () => {
 
   const [title, setTitle] = useState<string>("");
   const [columns, setColumns] = useState<string[]>([""]);
+  console.log(columns);
 
   /* Columns Input Handling Mechanism */
-  const addColumnInput = () => setColumns([...columns, ""]);
+  const addColumnInput = () => {
+    const mutate_data = create(columns, (instance) => {
+      instance.push("");
+    });
+    setColumns(mutate_data);
+  };
   const updateColumn = (index: number, value: string) => {
-    const updatedColumns = [...columns];
-    updatedColumns[index] = value;
+    const updatedColumns = create(columns, (draft) => {
+      draft[index] = value;
+    });
     setColumns(updatedColumns);
   };
   const removeColumn = (index: number) => {
@@ -49,7 +59,7 @@ export const CreateBoardModal = () => {
     e.preventDefault();
 
     mutation.mutate(
-      { title, columns: [...columns] },
+      { title, columns },
       {
         onSuccess: ({ data }) => {
           toast.success(`New Board "${data.title}"`);

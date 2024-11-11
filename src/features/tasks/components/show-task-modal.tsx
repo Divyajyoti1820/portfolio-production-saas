@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useGetColumn } from "@/features/columns/api/use-get-column";
 import { Skeleton } from "@/components/ui/skeleton";
+import { create } from "mutative";
 
 export const ShowTaskModal = () => {
   const [open, setOpen] = useShowTaskModal();
@@ -58,8 +59,9 @@ export const ShowTaskModal = () => {
   }, [task]);
 
   const updateSubtaskStatus = (index: number, isCompleted: boolean) => {
-    const updatedSubtasks = [...subtasks];
-    updatedSubtasks[index] = { ...updatedSubtasks[index], isCompleted };
+    const updatedSubtasks = create(subtasks, (draft) => {
+      draft[index].isCompleted = isCompleted;
+    });
     setSubtasks(updatedSubtasks);
   };
 

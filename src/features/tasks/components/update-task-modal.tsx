@@ -39,6 +39,7 @@ import { useGetTask } from "@/features/tasks/api/use-get-task";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
+import { create } from "mutative";
 
 const MAX_SUBTASKS = 4;
 
@@ -77,11 +78,15 @@ export const UpdateTaskModal = () => {
 
   /* Subtask operation handler  */
   const addSubtaskInput = () => {
-    setSubtasks([...subtasks, { title: "", isCompleted: false }]);
+    const mutated_value = create(subtasks, (draft) => {
+      draft.push({ title: "", isCompleted: false });
+    });
+    setSubtasks(mutated_value);
   };
   const updateSubtask = (index: number, value: string) => {
-    const updatedSubtasks = [...subtasks];
-    updatedSubtasks[index] = { ...updatedSubtasks[index], title: value };
+    const updatedSubtasks = create(subtasks, (draft) => {
+      draft[index].title = value;
+    });
     setSubtasks(updatedSubtasks);
   };
   const removeSubtask = (index: number) => {
