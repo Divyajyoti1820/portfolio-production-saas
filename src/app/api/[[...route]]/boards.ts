@@ -5,7 +5,7 @@ import { verifyAuth } from "@hono/auth-js";
 import { zValidator } from "@hono/zod-validator";
 
 import { db } from "@/db";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, asc } from "drizzle-orm";
 import { boards, columns } from "@/db/schema";
 
 const app = new Hono()
@@ -62,7 +62,7 @@ const app = new Hono()
       .select({ id: boards.id, title: boards.title })
       .from(boards)
       .where(eq(boards.userId, auth.token.id))
-      .orderBy(desc(boards.createdAt));
+      .orderBy(asc(boards.createdAt));
 
     if (!data) {
       return c.json(

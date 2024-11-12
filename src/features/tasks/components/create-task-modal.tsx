@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 
+import { create } from "mutative";
+
 import { MAX_SUBTASKS } from "@/lib/constants";
 
 import {
@@ -45,11 +47,15 @@ export const CreateTaskModal = () => {
 
   /* Subtask operation handler  */
   const addSubtaskInput = () => {
-    setSubtasks([...subtasks, { title: "", isCompleted: false }]);
+    const mutative_data = create(subtasks, (instance) => {
+      instance.push({ title: "", isCompleted: false });
+    });
+    setSubtasks(mutative_data);
   };
   const updateSubtask = (index: number, value: string) => {
-    const updatedSubtasks = [...subtasks];
-    updatedSubtasks[index] = { ...updatedSubtasks[index], title: value };
+    const updatedSubtasks = create(subtasks, (draft) => {
+      draft[index].title = value;
+    });
     setSubtasks(updatedSubtasks);
   };
   const removeSubtask = (index: number) => {
