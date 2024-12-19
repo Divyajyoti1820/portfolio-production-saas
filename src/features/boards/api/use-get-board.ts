@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export type RequestType = InferRequestType<
   (typeof client.api.boards)[":id"]["$get"]
->["param"];
+>["query"];
 
 export type ResponseType = InferResponseType<
   (typeof client.api.boards)[":id"]["$get"],
@@ -17,8 +17,8 @@ export const useGetBoard = (id: string) => {
     enabled: !!id,
     queryKey: ["board", { id }],
     queryFn: async () => {
-      const response = await client.api.boards[":id"].$get({
-        param: { id },
+      const response = await client.api.boards[":id"]["$get"]({
+        query: { id },
       });
 
       if (!response.ok) {

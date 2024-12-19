@@ -1,11 +1,8 @@
-import { ProtectServer } from "@/features/auth/utils";
-
 interface Props {
   children: React.ReactNode;
 }
 
-const DashboardLayout = async ({ children }: Props) => {
-  await ProtectServer();
+const DashboardLayout = ({ children }: Props) => {
   return <main className="h-full w-full">{children}</main>;
 };
 

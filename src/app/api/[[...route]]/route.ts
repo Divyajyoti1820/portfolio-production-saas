@@ -6,7 +6,7 @@ import authConfig from "@/auth.config";
 
 /* Major Routes */
 import users from "./users";
-import boards from "./boards";
+import boards from "@/features/boards/server/route";
 import columns from "./columns";
 import tasks from "./tasks";
 /* Major Routes */

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { create } from "mutative";
 
@@ -16,7 +15,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,16 +22,13 @@ import { Button } from "@/components/ui/button";
 import { useCreateBoardModal } from "@/features/boards/store/use-create-board-modal";
 import { useCreateBoard } from "@/features/boards/api/use-create-board";
 
-import { PlusIcon, TrashIcon } from "lucide-react";
+import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
 
 export const CreateBoardModal = () => {
-  const router = useRouter();
   const [open, setOpen] = useCreateBoardModal();
-  const mutation = useCreateBoard();
 
   const [title, setTitle] = useState<string>("");
   const [columns, setColumns] = useState<string[]>([""]);
-  console.log(columns);
 
   /* Columns Input Handling Mechanism */
   const addColumnInput = () => {
@@ -54,33 +49,28 @@ export const CreateBoardModal = () => {
   };
   /* Columns Input Handling Mechanism */
 
-  /* Create board Form Handler */
-  const createBoardFormHandler = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    mutation.mutate(
-      { title, columns },
-      {
-        onSuccess: ({ data }) => {
-          toast.success(`New Board "${data.title}"`);
-          setTitle("");
-          setColumns([""]);
-          setOpen(false);
-          router.push(`/board/${data.id}`);
-        },
-        onError: () => {
-          toast.error("Failed to create board");
-        },
-      }
-    );
-  };
-  /* Create board Form Handler */
-
   const removeHandler = () => {
     setTitle("");
     setColumns([""]);
     setOpen(false);
   };
+
+  /* Create board Form Handler */
+  const { mutate: CreateBoard, isPending: pendingCreateBoard } =
+    useCreateBoard();
+  const createBoardFormHandler = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    CreateBoard(
+      { title, columns },
+      {
+        onSuccess: () => {
+          removeHandler();
+        },
+      }
+    );
+  };
+  /* Create board Form Handler */
 
   return (
     <Dialog open={open} onOpenChange={removeHandler}>
@@ -98,7 +88,7 @@ export const CreateBoardModal = () => {
           <div className="w-full space-y-1">
             <Label>Title</Label>
             <Input
-              disabled={mutation.isPending}
+              disabled={pendingCreateBoard}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Production..."
@@ -112,7 +102,7 @@ export const CreateBoardModal = () => {
                 className="flex flex-row items-center justify-center gap-x-2"
               >
                 <Input
-                  disabled={mutation.isPending}
+                  disabled={pendingCreateBoard}
                   value={column}
                   onChange={(e) => updateColumn(index, e.target.value)}
                   required
@@ -120,7 +110,7 @@ export const CreateBoardModal = () => {
                 />
                 {index !== 0 && (
                   <button
-                    disabled={mutation.isPending}
+                    disabled={pendingCreateBoard}
                     onClick={() => removeColumn(index)}
                     className="p-2 bg-destructive  rounded-xl disabled:bg-destructive/40 hover:bg-destructive/40 transition"
                   >
@@ -131,7 +121,7 @@ export const CreateBoardModal = () => {
             ))}
             <button
               onClick={addColumnInput}
-              disabled={columns.length === MAX_COLUMNS || mutation.isPending}
+              disabled={columns.length === MAX_COLUMNS || pendingCreateBoard}
               className="flex ml-auto items-center justify-center gap-x-1 text-xs bg-blue-700 p-1.5 rounded-md disabled:bg-blue-900 hover:bg-blue-900 transition"
             >
               <PlusIcon className="size-4" />
@@ -141,15 +131,19 @@ export const CreateBoardModal = () => {
           <DialogFooter className="flex flex-col gap-y-2">
             <DialogClose>
               <Button
-                disabled={mutation.isPending}
+                disabled={pendingCreateBoard}
                 variant="destructive"
                 className="w-full"
               >
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit" disabled={mutation.isPending}>
-              Create
+            <Button type="submit" disabled={pendingCreateBoard}>
+              {pendingCreateBoard ? (
+                <Loader2Icon className="size-4 animate-spin" />
+              ) : (
+                <span>Create Board</span>
+              )}
             </Button>
           </DialogFooter>
         </form>

@@ -52,7 +52,7 @@ const app = new Hono()
       return c.json({ data: data[0] });
     }
   )
-  .get("/boards-list", verifyAuth(), async (c) => {
+  .get("/boards", verifyAuth(), async (c) => {
     const auth = c.get("authUser");
     if (!auth.token?.id) {
       return c.json({ error: "Un-Authorized Access" }, 401);
@@ -79,7 +79,7 @@ const app = new Hono()
     "/:id",
     verifyAuth(),
     zValidator(
-      "param",
+      "query",
       z.object({
         id: z.string(),
       })
@@ -90,7 +90,7 @@ const app = new Hono()
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
 
-      const { id } = c.req.valid("param");
+      const { id } = c.req.valid("query");
 
       const data = await db
         .select()

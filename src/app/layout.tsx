@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { SessionProvider } from "next-auth/react";
 
@@ -39,7 +38,6 @@ export default async function RootLayout({
               <Toaster />
               {children}
             </JotaiProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
           </QueryProvider>
         </body>
       </html>

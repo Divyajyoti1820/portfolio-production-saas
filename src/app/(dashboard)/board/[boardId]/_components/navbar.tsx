@@ -42,7 +42,7 @@ export const Navbar = () => {
     isError: boardError,
   } = useGetBoard(boardId);
 
-  const boardDeleteMutation = useDeleteBoard(boardId);
+  const boardDeleteMutation = useDeleteBoard();
 
   const deleteBoardHandler = async () => {
     if (!Boards) return;
