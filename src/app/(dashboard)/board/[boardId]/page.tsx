@@ -1,19 +1,20 @@
 "use client";
 
-import { redirect } from "next/navigation";
+import { cn } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 import { Navbar } from "./_components/navbar";
 import { ColumnContent } from "./_components/column-content";
 import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useSidebar } from "@/components/ui/sidebar";
-import { cn } from "@/lib/utils";
 
 const BoardIdPage = () => {
+  const router = useRouter();
   const { open } = useSidebar();
   const { data: Boards } = useGetBoards();
 
   if (!Boards || Boards.length === 0) {
-    redirect("/");
+    router.push("/");
   }
 
   return (

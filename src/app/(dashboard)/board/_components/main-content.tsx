@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 import { AlertCircleIcon, PlusCircleIcon, SidebarIcon } from "lucide-react";
 
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 
@@ -25,7 +25,7 @@ export const MainContent = ({ open }: Props) => {
   const router = useRouter();
   const session = useSession();
   const boardId = useGetBoardId();
-  const [createBoardModal, setCreateBoardModal] = useCreateBoardModal();
+  const { setIsOpen } = useCreateBoardModal();
 
   const {
     data: Boards,
@@ -66,7 +66,7 @@ export const MainContent = ({ open }: Props) => {
       return;
     }
 
-    setCreateBoardModal(!createBoardModal);
+    setIsOpen(true);
   };
   return (
     <SidebarMenu className="h-full p-2 flex flex-col gap-y-2 items-center">

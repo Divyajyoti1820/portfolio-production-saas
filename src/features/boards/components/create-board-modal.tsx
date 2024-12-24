@@ -25,7 +25,7 @@ import { useCreateBoard } from "@/features/boards/api/use-create-board";
 import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
 
 export const CreateBoardModal = () => {
-  const [open, setOpen] = useCreateBoardModal();
+  const { isOpen, setIsOpen } = useCreateBoardModal();
 
   const [title, setTitle] = useState<string>("");
   const [columns, setColumns] = useState<string[]>([""]);
@@ -52,7 +52,7 @@ export const CreateBoardModal = () => {
   const removeHandler = () => {
     setTitle("");
     setColumns([""]);
-    setOpen(false);
+    setIsOpen(false);
   };
 
   /* Create board Form Handler */
@@ -73,7 +73,7 @@ export const CreateBoardModal = () => {
   /* Create board Form Handler */
 
   return (
-    <Dialog open={open} onOpenChange={removeHandler}>
+    <Dialog open={isOpen} onOpenChange={removeHandler}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Board</DialogTitle>
@@ -131,6 +131,7 @@ export const CreateBoardModal = () => {
           <DialogFooter className="flex flex-col gap-y-2">
             <DialogClose>
               <Button
+                type="button"
                 disabled={pendingCreateBoard}
                 variant="destructive"
                 className="w-full"

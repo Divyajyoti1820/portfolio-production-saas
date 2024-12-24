@@ -10,7 +10,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useGetBoardId } from "@/hooks/use-get-board-id";
@@ -29,21 +29,16 @@ export const Navbar = () => {
   const [openCreateTaskModal, setOpenCreateTaskModal] = useCreateTaskModal();
 
   const { data: Boards } = useGetBoards();
-  const [openBoardUpdateModal, setOpenBoardUpdateModal] = useUpdateBoardModal();
+  const { setIsOpen } = useUpdateBoardModal();
+
+  const { data: BoardData, isLoading: loadingBoard } = useGetBoard(boardId);
+
+  const boardDeleteMutation = useDeleteBoard();
   const [ConfirmationModal, confirm] = useConfirmModal({
-    title: "Are you sure?",
+    title: "Are you sure want to delete board?",
     message:
       "Your are going to delete this board. This action is irreversible.",
   });
-
-  const {
-    data: BoardData,
-    isLoading: loadingBoard,
-    isError: boardError,
-  } = useGetBoard(boardId);
-
-  const boardDeleteMutation = useDeleteBoard();
-
   const deleteBoardHandler = async () => {
     if (!Boards) return;
 
@@ -78,7 +73,7 @@ export const Navbar = () => {
             <Skeleton className="h-6 w-40 rounded-sm" />
           ) : (
             <>
-              {boardError ? (
+              {!BoardData ? (
                 <div className="h-8 w-40 flex items-center justify-center rounded-sm gap-x-2 bg-black">
                   <AlertTriangleIcon className="size-4 text-destructive" />
                   <p className="text-xs text-destructive">Board Error</p>
@@ -97,7 +92,7 @@ export const Navbar = () => {
             side="bottom"
           >
             <button
-              disabled={boardError}
+              disabled={loadingBoard}
               onClick={() => setOpenCreateTaskModal(!openCreateTaskModal)}
               className="flex items-center justify-center gap-x-1 bg-teal-500 p-1 rounded-md hover:bg-teal-500/50 transition"
             >
@@ -109,8 +104,8 @@ export const Navbar = () => {
           </Hint>
           <Hint label="Edit Board" align="center" side="bottom">
             <button
-              onClick={() => setOpenBoardUpdateModal(!openBoardUpdateModal)}
-              disabled={boardError}
+              onClick={() => setIsOpen(true)}
+              disabled={loadingBoard}
               className="flex items-center justify-center gap-x-1 bg-primary p-1 rounded-md hover:bg-primary/50 transition"
             >
               <Edit2Icon className="size-5" />
@@ -118,7 +113,7 @@ export const Navbar = () => {
           </Hint>
           <Hint label="Delete Board" align="center" side="bottom">
             <button
-              disabled={boardError}
+              disabled={loadingBoard}
               onClick={deleteBoardHandler}
               className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
             >

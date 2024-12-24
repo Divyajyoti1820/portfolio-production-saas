@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AlertOctagonIcon } from "lucide-react";
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 
 type Props = {
   open: boolean;

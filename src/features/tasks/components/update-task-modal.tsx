@@ -201,32 +201,33 @@ export const UpdateTaskModal = () => {
           </div>
           <div className="space-y-2">
             <Label>Subtasks</Label>
-            {subtasks.map((subtask, index) => (
-              <div
-                key={index}
-                className="flex flex-row items-center justify-center gap-x-2"
-              >
-                <Input
-                  disabled={mutation.isPending}
-                  value={subtask.title}
-                  onChange={(e) => updateSubtask(index, e.target.value)}
-                  required
-                  placeholder="Subtask name..."
-                />
-                {index !== 0 && (
-                  <button
+            {!!subtasks &&
+              subtasks?.map((subtask, index) => (
+                <div
+                  key={index}
+                  className="flex flex-row items-center justify-center gap-x-2"
+                >
+                  <Input
                     disabled={mutation.isPending}
-                    onClick={() => removeSubtask(index)}
-                    className="p-2 bg-destructive  rounded-xl disabled:bg-destructive/40 hover:bg-destructive/40 transition"
-                  >
-                    <TrashIcon className="size-4" />
-                  </button>
-                )}
-              </div>
-            ))}
+                    value={subtask.title}
+                    onChange={(e) => updateSubtask(index, e.target.value)}
+                    required
+                    placeholder="Subtask name..."
+                  />
+                  {index !== 0 && (
+                    <button
+                      disabled={mutation.isPending}
+                      onClick={() => removeSubtask(index)}
+                      className="p-2 bg-destructive  rounded-xl disabled:bg-destructive/40 hover:bg-destructive/40 transition"
+                    >
+                      <TrashIcon className="size-4" />
+                    </button>
+                  )}
+                </div>
+              ))}
             <button
               onClick={addSubtaskInput || mutation.isPending}
-              disabled={subtasks.length === MAX_SUBTASKS}
+              disabled={subtasks?.length === MAX_SUBTASKS}
               className="flex ml-auto items-center justify-center gap-x-1 text-xs bg-blue-700 p-1.5 rounded-md disabled:bg-blue-900 hover:bg-blue-900 transition"
             >
               <PlusIcon className="size-4" />
@@ -267,6 +268,7 @@ export const UpdateTaskModal = () => {
           <DialogFooter>
             <DialogClose>
               <Button
+                type="button"
                 disabled={mutation.isPending}
                 className="bg-destructive hover:bg-destructive/50 transition"
               >

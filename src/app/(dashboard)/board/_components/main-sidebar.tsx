@@ -17,7 +17,7 @@ import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
 import { UserInfo } from "./user-info";
 import { MainContent } from "./main-content";
 import { LogoutButton } from "./logout-button";
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 
 export const MainSidebar = () => {
   const router = useRouter();

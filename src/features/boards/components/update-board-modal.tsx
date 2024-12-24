@@ -11,7 +11,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -24,50 +23,52 @@ import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-mo
 export const UpdateBoardModal = () => {
   const boardId = useGetBoardId();
   const { data: boardData, isLoading: boardDataLoading } = useGetBoard(boardId);
-  const [open, setOpen] = useUpdateBoardModal();
+  const { isOpen, setIsOpen } = useUpdateBoardModal();
   const [title, setTitle] = useState<string>("");
+  const [error, setError] = useState<string>("");
 
   useEffect(() => {
     if (boardData) {
       setTitle(boardData.title);
+      setError("");
     }
   }, [boardData]);
 
-  const mutation = useUpdateBoard(boardId);
+  const removeHandler = () => {
+    setTitle("");
+    setIsOpen(false);
+  };
 
+  const mutation = useUpdateBoard();
   const updateBoardHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    if (title.trim().length < 3) {
+      setError("Title must be at least 3 characters long");
+      return;
+    }
+
     mutation.mutate(
-      { title },
+      { param: { id: boardId }, json: { title } },
       {
         onSuccess: () => {
-          toast.success("Board updated successfully");
-          setTitle("");
-          setOpen(false);
-        },
-        onError: () => {
-          toast.error("Failed to update board");
+          removeHandler();
         },
       }
     );
   };
 
-  const removeHandler = () => {
-    setTitle("");
-    setOpen(false);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={removeHandler}>
+    <Dialog open={isOpen} onOpenChange={removeHandler}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Update Board Title</DialogTitle>
+          <DialogTitle>Update Board</DialogTitle>
           <DialogDescription className="text-xs">
             Change your board title
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={updateBoardHandler} className="space-y-3">
+          {!!error && <p className="text-sm text-destructive mt-1">{error}</p>}
           <div className="space-y-1">
             <Label>Board Title</Label>
             <Input
@@ -80,7 +81,11 @@ export const UpdateBoardModal = () => {
           </div>
           <DialogFooter className="flex flex-row items-center gap-x-1 justify-end">
             <DialogClose>
-              <Button disabled={mutation.isPending} className="bg-destructive">
+              <Button
+                type="button"
+                disabled={mutation.isPending}
+                className="bg-destructive"
+              >
                 Cancel
               </Button>
             </DialogClose>

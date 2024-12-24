@@ -1,6 +1,6 @@
 "use client";
 
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 import { LogOutIcon } from "lucide-react";
 
 import { signOut } from "next-auth/react";

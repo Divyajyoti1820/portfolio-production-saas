@@ -76,7 +76,7 @@ const app = new Hono()
     return c.json({ data: data });
   })
   .get(
-    "/:id",
+    "/",
     verifyAuth(),
     zValidator(
       "query",
@@ -165,7 +165,7 @@ const app = new Hono()
         );
       }
 
-      return c.json({ data: id });
+      return c.json({ data: { id: id } });
     }
   );
 

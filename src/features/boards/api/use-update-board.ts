@@ -1,24 +1,24 @@
 import { InferRequestType, InferResponseType } from "hono";
 import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 type RequestType = InferRequestType<
   (typeof client.api.boards)[":id"]["$patch"]
->["json"];
+>;
 
 type ResponseType = InferResponseType<
   (typeof client.api.boards)[":id"]["$patch"],
   200
 >;
 
-export const useUpdateBoard = (id: string) => {
+export const useUpdateBoard = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationKey: ["board", { id }],
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.boards[":id"].$patch({
         json,
-        param: { id },
+        param,
       });
 
       if (!response.ok) {
@@ -27,9 +27,14 @@ export const useUpdateBoard = (id: string) => {
 
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["board", { id }] });
+    onSuccess: ({ data }) => {
+      toast.success("Board updated successfully");
+
       queryClient.invalidateQueries({ queryKey: ["boards"] });
+      queryClient.invalidateQueries({ queryKey: ["board", data.id] });
+    },
+    onError: () => {
+      toast.error("Failed to update board");
     },
   });
   return mutation;

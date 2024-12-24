@@ -4,20 +4,19 @@ import { InferRequestType, InferResponseType } from "hono";
 import { useQuery } from "@tanstack/react-query";
 
 export type RequestType = InferRequestType<
-  (typeof client.api.boards)[":id"]["$get"]
+  (typeof client.api.boards)["$get"]
 >["query"];
 
 export type ResponseType = InferResponseType<
-  (typeof client.api.boards)[":id"]["$get"],
+  (typeof client.api.boards)["$get"],
   200
 >;
 
 export const useGetBoard = (id: string) => {
   const query = useQuery({
-    enabled: !!id,
-    queryKey: ["board", { id }],
+    queryKey: ["board", id],
     queryFn: async () => {
-      const response = await client.api.boards[":id"]["$get"]({
+      const response = await client.api.boards["$get"]({
         query: { id },
       });
 
