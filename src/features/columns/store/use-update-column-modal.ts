@@ -1,7 +1,18 @@
-import { atom, useAtom } from "jotai";
-
-const modalState = atom(false);
+import { useQueryState, parseAsBoolean } from "nuqs";
 
 export const useUpdateColumnModal = () => {
-  return useAtom(modalState);
+  const [isOpen, setIsOpen] = useQueryState(
+    "update-column",
+    parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
+  );
+
+  const open = () => setIsOpen(true);
+  const close = () => setIsOpen(false);
+
+  return {
+    isOpen,
+    open,
+    close,
+    setIsOpen,
+  };
 };

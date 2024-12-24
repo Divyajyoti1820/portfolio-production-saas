@@ -5,10 +5,10 @@ import { AuthConfig, initAuthConfig } from "@hono/auth-js";
 import authConfig from "@/auth.config";
 
 /* Major Routes */
-import users from "./users";
+import users from "@/features/auth/server/route";
 import boards from "@/features/boards/server/route";
-import columns from "./columns";
-import tasks from "./tasks";
+import columns from "@/features/columns/server/route";
+import tasks from "@/features/tasks/server/route";
 /* Major Routes */
 
 export const runtime = "nodejs";

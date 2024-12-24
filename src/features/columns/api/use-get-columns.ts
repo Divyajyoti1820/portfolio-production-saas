@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useGetColumns = (boardId: string) => {
   const query = useQuery({
-    queryKey: ["columns", { boardId }],
+    queryKey: ["columns", boardId],
     queryFn: async () => {
       const response = await client.api.columns[":boardId"].$get({
         param: { boardId },

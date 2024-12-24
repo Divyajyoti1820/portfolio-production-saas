@@ -1,7 +1,8 @@
-import { atom, useAtom } from "jotai";
-
-const modalState = atom<string | undefined>(undefined);
+import { useQueryState, parseAsString } from "nuqs";
 
 export const useGetColumnId = () => {
-  return useAtom(modalState);
+  return useQueryState(
+    "columnId",
+    parseAsString.withDefault("").withOptions({ clearOnDefault: true })
+  );
 };

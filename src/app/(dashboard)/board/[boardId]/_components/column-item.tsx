@@ -13,15 +13,14 @@ type Props = {
 };
 
 export const ColumnItem = ({ data, boardId }: Props) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_columnId, setColumnId] = useGetColumnId();
+  const [columnId, setColumnId] = useGetColumnId();
 
   const [ConfirmationDialog, confirm] = useConfirmModal({
     title: "Are you sure?",
     message: "If you delete this column underlying all task will be deleted.",
   });
 
-  const deleteColumn = useDeleteColumn(data.id, boardId);
+  const deleteColumn = useDeleteColumn();
   const deleteBoardHandler = async () => {
     const ok = await confirm();
     if (!ok) {
@@ -29,7 +28,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
     }
 
     deleteColumn.mutate(
-      { boardId },
+      { param: { id: columnId }, json: { boardId } },
       {
         onSuccess: () => {
           toast.success("Column removed successfully");
@@ -41,7 +40,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
     );
   };
 
-  const [openColumnModal, setOpenColumnModal] = useUpdateColumnModal();
+  const { setIsOpen: setOpenColumnUpdateModal } = useUpdateColumnModal();
 
   return (
     <div className="w-[260px] h-full  rounded-md">
@@ -54,7 +53,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
           <button
             onClick={() => {
               setColumnId(data.id);
-              setOpenColumnModal(!openColumnModal);
+              setOpenColumnUpdateModal(true);
             }}
             className="text-white hover:text-primary disabled:text-primary/50 transition"
           >

@@ -115,6 +115,7 @@ const app = new Hono()
         })
         .where(and(eq(columns.boardId, boardId), eq(columns.id, id)))
         .returning();
+
       if (!data || data.length === 0) {
         return c.json(
           { error: "[COLUMN_GET] : Failed to update columns." },
@@ -122,7 +123,7 @@ const app = new Hono()
         );
       }
 
-      return c.json({ data: id });
+      return c.json({ data: data[0] });
     }
   )
   .delete(
@@ -158,7 +159,7 @@ const app = new Hono()
         );
       }
 
-      return c.json({ data: id });
+      return c.json({ data: data[0] });
     }
   )
   .post(

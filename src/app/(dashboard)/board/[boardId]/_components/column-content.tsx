@@ -15,13 +15,9 @@ import { MAX_COLUMNS } from "@/lib/constants";
 export const ColumnContent = () => {
   const { open } = useSidebar();
   const boardId = useGetBoardId();
-  const [openCreateColumnModal, setCreateColumnModal] = useCreateColumnModal();
+  const { setIsOpen: setIsCreateColumnModalOpen } = useCreateColumnModal();
 
-  const {
-    data: ColumnData,
-    isLoading: ColumnLoading,
-    isError: ColumnError,
-  } = useGetColumns(boardId);
+  const { data: ColumnData, isLoading: ColumnLoading } = useGetColumns(boardId);
 
   if (ColumnLoading) {
     return (
@@ -40,7 +36,7 @@ export const ColumnContent = () => {
       </ScrollArea>
     );
   }
-  if (!ColumnData || ColumnError) {
+  if (!ColumnData) {
     return (
       <ScrollArea
         className={cn(
@@ -70,7 +66,7 @@ export const ColumnContent = () => {
         ))}
         {ColumnData.length !== MAX_COLUMNS && (
           <div
-            onClick={() => setCreateColumnModal(!openCreateColumnModal)}
+            onClick={() => setIsCreateColumnModalOpen(true)}
             className="w-[180px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 rounded-md hover:bg-black transition text-blue-500 cursor-pointer"
           >
             <PlusIcon className="size-8" />

@@ -5,20 +5,19 @@ import { InferResponseType, InferRequestType } from "hono";
 
 type RequestType = InferRequestType<
   (typeof client.api.columns)[":id"]["$patch"]
->["json"];
+>;
 
 type ResponseType = InferResponseType<
   (typeof client.api.columns)[":id"]["$patch"],
   200
 >;
 
-export const useUpdateColumn = (id: string, boardId: string) => {
+export const useUpdateColumn = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationKey: [!!id],
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.columns[":id"].$patch({
-        param: { id },
+        param,
         json,
       });
 
@@ -28,10 +27,11 @@ export const useUpdateColumn = (id: string, boardId: string) => {
 
       return await response.json();
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["column", { boardId, id }] });
-      queryClient.invalidateQueries({ queryKey: ["columns", { boardId }] });
-      queryClient.invalidateQueries({ queryKey: ["boards"] });
+    onSuccess: ({ data }) => {
+      queryClient.invalidateQueries({
+        queryKey: ["column", { boardId: data.boardId, id: data.id }],
+      });
+      queryClient.invalidateQueries({ queryKey: ["columns", data.boardId] });
     },
   });
 

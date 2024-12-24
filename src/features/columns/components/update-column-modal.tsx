@@ -26,7 +26,7 @@ import { toast } from "sonner";
 import { AlertOctagonIcon } from "lucide-react";
 
 export const UpdateColumnModal = () => {
-  const [open, setOpen] = useUpdateColumnModal();
+  const { isOpen, setIsOpen } = useUpdateColumnModal();
 
   const boardId = useGetBoardId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -42,17 +42,21 @@ export const UpdateColumnModal = () => {
     }
   }, [data]);
 
-  const mutation = useUpdateColumn(id!, boardId);
+  const handleClose = () => {
+    setTitle("");
+    setIsOpen(false);
+  };
+
+  const mutation = useUpdateColumn();
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     mutation.mutate(
-      { title, boardId },
+      { param: { id }, json: { title, boardId } },
       {
         onSuccess: () => {
           toast.success("Column updated successfully");
-          setTitle("");
-          setOpen(false);
+          handleClose();
         },
         onError: () => {
           toast.error("Failed to update column");
@@ -61,14 +65,9 @@ export const UpdateColumnModal = () => {
     );
   };
 
-  const handleClose = () => {
-    setTitle("");
-    setOpen(false);
-  };
-
   if (isError) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="flex items-center justify-center">
           <AlertOctagonIcon className="size-8 text-destructive" />
           <p className="text-lg font-semibold text-destructive">
@@ -80,7 +79,7 @@ export const UpdateColumnModal = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Column</DialogTitle>
@@ -99,8 +98,9 @@ export const UpdateColumnModal = () => {
           <DialogFooter className="flex flex-row items-center gap-x-1 justify-end">
             <DialogClose>
               <Button
+                type="button"
                 disabled={mutation.isPending}
-                onClick={() => setOpen(false)}
+                onClick={() => setIsOpen(false)}
                 className="bg-destructive hover:bg-destructive/50"
               >
                 Cancel
