@@ -4,18 +4,18 @@ import { InferRequestType, InferResponseType } from "hono";
 
 type RequestType = InferRequestType<
   (typeof client.api.tasks)[":boardId"]["$post"]
->["json"];
+>;
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)[":boardId"]["$post"],
   200
 >;
 
-export const useCreateTask = (boardId: string, columnId: string) => {
+export const useCreateTask = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":boardId"].$post({
-        param: { boardId },
+        param,
         json,
       });
 
@@ -25,9 +25,9 @@ export const useCreateTask = (boardId: string, columnId: string) => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", { boardId, columnId }],
+        queryKey: ["tasks", data.columnId],
       });
     },
   });

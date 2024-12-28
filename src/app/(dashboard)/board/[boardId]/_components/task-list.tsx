@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const TaskList = ({ boardId, columnId }: Props) => {
-  const { data: tasks, isLoading, isError } = useGetTasks(boardId, columnId);
+  const { data: tasks, isLoading } = useGetTasks(boardId, columnId);
 
   if (isLoading) {
     return (
@@ -24,7 +24,7 @@ export const TaskList = ({ boardId, columnId }: Props) => {
       </ScrollArea>
     );
   }
-  if (!tasks || isError) {
+  if (!tasks) {
     return (
       <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
         <div className="h-full w-[260px] flex flex-col gap-y-3 items-center justify-center bg-black/20">

@@ -5,23 +5,18 @@ import { InferRequestType, InferResponseType } from "hono";
 
 type RequestType = InferRequestType<
   (typeof client.api.tasks)[":columnId"][":id"]["$patch"]
->["json"];
+>;
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)[":columnId"][":id"]["$patch"],
   200
 >;
 
-export const useUpdateTask = (
-  boardId: string,
-  columnId: string,
-  nextColumnId: string,
-  taskId: string
-) => {
+export const useUpdateTask = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":columnId"][":id"].$patch({
-        param: { columnId, id: taskId },
+        param,
         json,
       });
 
@@ -32,17 +27,10 @@ export const useUpdateTask = (
       return await response.json();
     },
 
-    onSuccess: () => {
-      queryClient.invalidateQueries();
+    onSuccess: ({ data }) => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", { boardId, columnId }],
+        queryKey: ["tasks", data.columnId],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["tasks", { boardId, nextColumnId }],
-      });
-      queryClient.invalidateQueries({ queryKey: ["task", { taskId }] });
-      queryClient.invalidateQueries({ queryKey: ["board", { boardId }] });
-      queryClient.refetchQueries({ queryKey: ["task", { taskId }] });
     },
   });
 

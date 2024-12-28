@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1729646961359,
-      "tag": "0000_brief_maggott",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1729678758395,
-      "tag": "0001_serious_the_watchers",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1729743600121,
-      "tag": "0002_hard_random",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1730270033782,
-      "tag": "0003_robust_swordsman",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1730632865353,
-      "tag": "0004_furry_black_widow",
+      "when": 1735222836333,
+      "tag": "0000_wandering_captain_america",
       "breakpoints": true
     }
   ]

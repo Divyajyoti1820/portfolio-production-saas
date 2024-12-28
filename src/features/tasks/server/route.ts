@@ -206,7 +206,7 @@ const app = new Hono()
         return c.json({ error: "[TASK_GET] : Task not found" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .patch(
@@ -285,7 +285,7 @@ const app = new Hono()
         return c.json({ error: "Failed to update board" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .patch(
@@ -349,7 +349,7 @@ const app = new Hono()
         return c.json({ error: "[TASK_UPDATE] : Failed to update task" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .post(
@@ -406,7 +406,7 @@ const app = new Hono()
         return c.json({ error: "[TASK_COPY] : Failed to copy data" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   );
 

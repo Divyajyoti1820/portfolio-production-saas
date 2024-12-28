@@ -37,13 +37,13 @@ export const UpdateColumnModal = () => {
   const { data, isLoading, isError } = useGetColumn(boardId, id!);
 
   useEffect(() => {
-    if (data) {
+    if (isOpen && !isLoading && data) {
       setTitle(data?.title);
     }
-  }, [data]);
+  }, [isOpen, data, isLoading]);
 
   const handleClose = () => {
-    setTitle("");
+    setTitle(data?.title ?? "");
     setIsOpen(false);
   };
 

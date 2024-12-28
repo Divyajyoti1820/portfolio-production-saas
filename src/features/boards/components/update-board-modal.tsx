@@ -11,6 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -25,18 +26,16 @@ export const UpdateBoardModal = () => {
   const { data: boardData, isLoading: boardDataLoading } = useGetBoard(boardId);
   const { isOpen, setIsOpen } = useUpdateBoardModal();
   const [title, setTitle] = useState<string>("");
-  const [error, setError] = useState<string>("");
 
   useEffect(() => {
-    if (boardData) {
+    if (isOpen && !boardDataLoading && boardData) {
       setTitle(boardData.title);
-      setError("");
     }
-  }, [boardData]);
+  }, [isOpen, boardData, boardDataLoading]);
 
   const removeHandler = () => {
-    setTitle("");
     setIsOpen(false);
+    setTitle(boardData?.title ?? "");
   };
 
   const mutation = useUpdateBoard();
@@ -44,7 +43,7 @@ export const UpdateBoardModal = () => {
     e.preventDefault();
 
     if (title.trim().length < 3) {
-      setError("Title must be at least 3 characters long");
+      toast.error("Board title must be at least 3 characters long");
       return;
     }
 
@@ -68,7 +67,6 @@ export const UpdateBoardModal = () => {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={updateBoardHandler} className="space-y-3">
-          {!!error && <p className="text-sm text-destructive mt-1">{error}</p>}
           <div className="space-y-1">
             <Label>Board Title</Label>
             <Input

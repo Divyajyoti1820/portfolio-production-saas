@@ -7,7 +7,7 @@ export const useGetTask = (
   taskId: string
 ) => {
   const query = useQuery({
-    queryKey: ["task", { taskId }],
+    queryKey: ["task", taskId],
 
     queryFn: async () => {
       const response = await client.api.tasks[":boardId"][":columnId"][

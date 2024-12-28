@@ -33,11 +33,11 @@ import { Loader2Icon, PlusIcon, TrashIcon } from "lucide-react";
 import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useGetColumns } from "@/features/columns/api/use-get-columns";
 import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
-import { useCreateTask } from "../api/use-create-task";
+import { useCreateTask } from "@/features/tasks/api/use-create-task";
 
 export const CreateTaskModal = () => {
   const boardId = useGetBoardId();
-  const [open, setOpen] = useCreateTaskModal();
+  const { isOpen, setIsOpen } = useCreateTaskModal();
   const [title, setTitle] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [columnId, setColumnId] = useState<string>("");
@@ -64,22 +64,25 @@ export const CreateTaskModal = () => {
   };
   /* Subtask operation handler  */
 
-  const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setColumnId("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setIsOpen(false);
+  };
 
+  const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
   /* Create Task Handler */
-  const mutation = useCreateTask(boardId, columnId);
+  const mutation = useCreateTask();
   const createTaskHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutation.mutate(
-      { title, description, columnId, subtasks },
+      { param: { boardId }, json: { title, description, columnId, subtasks } },
       {
         onSuccess: () => {
           toast.success("Task create successfully");
-          setTitle("");
-          setDescription("");
-          setColumnId("");
-          setSubtasks([{ title: "", isCompleted: false }]);
-          setOpen(false);
+          handleClose();
         },
         onError: () => {
           toast.error("Failed to create task");
@@ -89,16 +92,8 @@ export const CreateTaskModal = () => {
   };
   /* Create Task Handler */
 
-  const handleClose = () => {
-    setTitle("");
-    setDescription("");
-    setColumnId("");
-    setSubtasks([{ title: "", isCompleted: false }]);
-    setOpen(false);
-  };
-
   return (
-    <Dialog open={open} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create New Task</DialogTitle>

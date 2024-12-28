@@ -140,7 +140,7 @@ const app = new Hono()
     "/:id",
     verifyAuth(),
     zValidator("param", z.object({ id: z.string() })),
-    zValidator("json", z.object({ title: z.string().min(3).max(25) })),
+    zValidator("json", z.object({ title: z.string().min(3).max(126) })),
     async (c) => {
       const auth = c.get("authUser");
       if (!auth.token?.id) {

@@ -5,23 +5,19 @@ import { InferRequestType } from "hono";
 
 type RequestType = InferRequestType<
   (typeof client.api.tasks)[":id"]["$delete"]
->["json"];
+>;
 
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)[":id"]["$delete"],
   200
 >;
 
-export const useRemoveTask = (
-  boardId: string,
-  columnId: string,
-  taskId: string
-) => {
+export const useRemoveTask = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":id"].$delete({
-        param: { id: taskId },
+        param,
         json,
       });
 
@@ -31,9 +27,9 @@ export const useRemoveTask = (
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", { boardId, columnId }],
+        queryKey: ["tasks", data.columnId],
       });
     },
   });

@@ -26,7 +26,7 @@ export const Navbar = () => {
   const router = useRouter();
   const isBreakpoint = useMediaQuery("(max-width:1080px)");
   const boardId = useGetBoardId();
-  const [openCreateTaskModal, setOpenCreateTaskModal] = useCreateTaskModal();
+  const { setIsOpen: setIsOpenCreateTaskModal } = useCreateTaskModal();
 
   const { data: Boards } = useGetBoards();
   const { setIsOpen } = useUpdateBoardModal();
@@ -93,7 +93,7 @@ export const Navbar = () => {
           >
             <button
               disabled={loadingBoard}
-              onClick={() => setOpenCreateTaskModal(!openCreateTaskModal)}
+              onClick={() => setIsOpenCreateTaskModal(true)}
               className="flex items-center justify-center gap-x-1 bg-teal-500 p-1 rounded-md hover:bg-teal-500/50 transition"
             >
               <PlusSquareIcon className="size-5" />

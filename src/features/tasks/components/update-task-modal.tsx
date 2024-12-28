@@ -38,13 +38,13 @@ import { useUpdateTask } from "@/features/tasks/api/use-update-task";
 import { useGetTask } from "@/features/tasks/api/use-get-task";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
 import { useGetTaskId } from "@/hooks/use-get-task-id";
-import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task.modal";
+import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task-modal";
 import { create } from "mutative";
 
 const MAX_SUBTASKS = 4;
 
 export const UpdateTaskModal = () => {
-  const [open, setOpen] = useUpdateTaskModal();
+  const { isOpen, setIsOpen } = useUpdateTaskModal();
   const boardId = useGetBoardId();
   const [presentColumnId, setPresentColumnId] = useGetColumnId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -73,7 +73,8 @@ export const UpdateTaskModal = () => {
       setColumnId(task.columnId);
       setSubtasks(task.subtasks);
     }
-  }, [task, columns]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   /* Fetching Data of the task */
 
   /* Subtask operation handler  */
@@ -95,23 +96,29 @@ export const UpdateTaskModal = () => {
   };
   /* Subtask operation handler  */
 
-  /* Update Task Handler */
-  const mutation = useUpdateTask(boardId, presentColumnId!, columnId, taskId!);
+  const handleClose = () => {
+    setTitle("");
+    setDescription("");
+    setSubtasks([{ title: "", isCompleted: false }]);
+    setPresentColumnId("");
+    setColumnId("");
+    setTaskId("");
+    setIsOpen(false);
+  };
 
+  /* Update Task Handler */
+  const mutation = useUpdateTask();
   const createTaskHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     mutation.mutate(
-      { boardId, title, description, newColumnId: columnId, subtasks },
+      {
+        param: { id: taskId, columnId },
+        json: { boardId, title, description, newColumnId: columnId, subtasks },
+      },
       {
         onSuccess: () => {
           toast.success("Task updated successfully");
-          setTitle("");
-          setDescription("");
-          setSubtasks([{ title: "", isCompleted: false }]);
-          setPresentColumnId("");
-          setColumnId("");
-          setTaskId("");
-          setOpen(false);
+          handleClose();
         },
         onError: () => {
           toast.error("Failed to update task");
@@ -121,16 +128,9 @@ export const UpdateTaskModal = () => {
   };
   /* Update Task Handler */
 
-  const handleClose = () => {
-    setTitle("");
-    setDescription("");
-    setSubtasks([{ title: "", isCompleted: false }]);
-    setOpen(false);
-  };
-
   if (taskLoading) {
     return (
-      <Dialog open={open} onOpenChange={handleClose}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Task</DialogTitle>
@@ -149,7 +149,7 @@ export const UpdateTaskModal = () => {
 
   if (taskError) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Update Task</DialogTitle>
@@ -170,7 +170,7 @@ export const UpdateTaskModal = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Update Task</DialogTitle>

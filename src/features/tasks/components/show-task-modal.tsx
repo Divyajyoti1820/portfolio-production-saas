@@ -30,7 +30,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { create } from "mutative";
 
 export const ShowTaskModal = () => {
-  const [open, setOpen] = useShowTaskModal();
+  const { isOpen, setIsOpen } = useShowTaskModal();
   const boardId = useGetBoardId();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [columnId, setColumnId] = useGetColumnId();
@@ -40,23 +40,23 @@ export const ShowTaskModal = () => {
     { title: string; isCompleted: boolean }[]
   >([]);
 
-  const {
-    data: task,
-    isLoading: taskLoading,
-    isError: taskError,
-  } = useGetTask(boardId, columnId!, taskId!);
+  const { data: task, isLoading: taskLoading } = useGetTask(
+    boardId,
+    columnId!,
+    taskId!
+  );
 
-  const {
-    data: column,
-    isLoading: columnIsLoading,
-    isError: columnError,
-  } = useGetColumn(boardId, columnId!);
+  const { data: column, isLoading: columnIsLoading } = useGetColumn(
+    boardId,
+    columnId!
+  );
 
   useEffect(() => {
     if (task) {
       setSubtasks(task.subtasks);
     }
-  }, [task]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const updateSubtaskStatus = (index: number, isCompleted: boolean) => {
     const updatedSubtasks = create(subtasks, (draft) => {
@@ -65,19 +65,26 @@ export const ShowTaskModal = () => {
     setSubtasks(updatedSubtasks);
   };
 
-  const mutation = useUpdateSubtask(boardId, columnId!, taskId!);
+  const handleClose = () => {
+    setSubtasks([]);
+    setColumnId("");
+    setTaskId("");
+    setIsOpen(false);
+  };
+
+  const mutation = useUpdateSubtask();
   const onSubmitHandler = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     mutation.mutate(
-      { boardId, subtasks },
+      {
+        param: { id: taskId, columnId: columnId },
+        json: { boardId, subtasks },
+      },
       {
         onSuccess: () => {
           toast.success("Progress updated successfully");
-          setSubtasks([]);
-          setColumnId("");
-          setTaskId("");
-          setOpen(false);
+          handleClose();
         },
         onError: () => {
           toast.error("Failed to update progress");
@@ -86,14 +93,9 @@ export const ShowTaskModal = () => {
     );
   };
 
-  const handleClose = () => {
-    setSubtasks([]);
-    setOpen(false);
-  };
-
   if (taskLoading) {
     return (
-      <Dialog open={open} onOpenChange={handleClose}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <Separator className="h-6 w-[400px] rounded-sm bg-black/70" />
@@ -111,9 +113,9 @@ export const ShowTaskModal = () => {
     );
   }
 
-  if (!task || taskError || columnError) {
+  if (!task || !column) {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
         <DialogContent>
           <DialogHeader>
             <Separator className="h-6 w-[400px] rounded-sm bg-destructive" />
@@ -129,7 +131,7 @@ export const ShowTaskModal = () => {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{task?.title}</DialogTitle>
@@ -149,7 +151,7 @@ export const ShowTaskModal = () => {
 
         <form onSubmit={onSubmitHandler} className="space-y-2">
           <Label>Subtasks</Label>
-          {subtasks.map((subtask, index) => (
+          {subtasks?.map((subtask, index) => (
             <div
               key={index}
               className={cn(
@@ -158,17 +160,17 @@ export const ShowTaskModal = () => {
               )}
             >
               <Label
-                htmlFor={subtask.title}
+                htmlFor={subtask?.title}
                 className={cn(
                   "text-sm flex-1 cursor-pointer",
-                  subtask.isCompleted && "line-through"
+                  subtask?.isCompleted && "line-through"
                 )}
               >
-                {subtask.title}
+                {subtask?.title}
               </Label>
               <Checkbox
-                id={subtask.title}
-                defaultChecked={subtask.isCompleted}
+                id={subtask?.title}
+                defaultChecked={subtask?.isCompleted}
                 onCheckedChange={(checked: boolean) =>
                   updateSubtaskStatus(index, checked)
                 }

@@ -17,8 +17,8 @@ export const useUpdateBoard = () => {
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param, json }) => {
       const response = await client.api.boards[":id"].$patch({
-        json,
         param,
+        json,
       });
 
       if (!response.ok) {
