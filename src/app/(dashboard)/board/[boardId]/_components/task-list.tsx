@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const TaskList = ({ boardId, columnId }: Props) => {
-  const { data: tasks, isLoading } = useGetTasks(boardId, columnId);
+  const { data: tasks, isLoading } = useGetTasks({ boardId, columnId });
 
   if (isLoading) {
     return (

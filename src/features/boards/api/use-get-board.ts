@@ -12,12 +12,16 @@ export type ResponseType = InferResponseType<
   200
 >;
 
-export const useGetBoard = (id: string) => {
+type Props = {
+  boardId: string;
+};
+
+export const useGetBoard = ({ boardId }: Props) => {
   const query = useQuery({
-    queryKey: ["board", id],
+    queryKey: ["board", boardId],
     queryFn: async () => {
       const response = await client.api.boards["$get"]({
-        query: { id },
+        query: { id: boardId },
       });
 
       if (!response.ok) {

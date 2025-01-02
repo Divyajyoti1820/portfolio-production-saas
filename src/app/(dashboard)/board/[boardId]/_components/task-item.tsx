@@ -35,11 +35,11 @@ type Props = {
 };
 
 export const TaskItem = ({ data, boardId }: Props) => {
-  const [taskId, setTaskId] = useGetTaskId();
-  const [columnId, setColumnId] = useGetColumnId();
+  const { id: taskId } = useGetTaskId();
+  const { id: columnId, setId: setColumnId } = useGetColumnId();
 
-  const { setIsOpen: setIsOpenUpdateTaskModal } = useUpdateTaskModal();
-  const { setIsOpen: setIsOpenShowTaskModal } = useShowTaskModal();
+  const { open: setIsOpenUpdateTaskModal } = useUpdateTaskModal();
+  const { open: setIsOpenShowTaskModal } = useShowTaskModal();
   const [ConfirmationDialog, confirm] = useConfirmModal({
     title: "Are you sure?",
     message:
@@ -102,9 +102,8 @@ export const TaskItem = ({ data, boardId }: Props) => {
       <ConfirmationDialog />
       <div
         onClick={() => {
-          setTaskId(data.id);
           setColumnId(data.columnId);
-          setIsOpenShowTaskModal(true);
+          setIsOpenShowTaskModal(data.id);
         }}
         className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center p-2 hover:bg-black transition cursor-pointer"
       >
@@ -131,9 +130,8 @@ export const TaskItem = ({ data, boardId }: Props) => {
         </button>
         <button
           onClick={() => {
-            setTaskId(data.id);
             setColumnId(data.columnId);
-            setIsOpenUpdateTaskModal(true);
+            setIsOpenUpdateTaskModal(data.id);
           }}
           className="bg-blue-700 p-1 rounded-md hover:bg-blue-500 transition"
         >

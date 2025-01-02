@@ -17,7 +17,9 @@ export const ColumnContent = () => {
   const boardId = useGetBoardId();
   const { setIsOpen: setIsCreateColumnModalOpen } = useCreateColumnModal();
 
-  const { data: ColumnData, isLoading: ColumnLoading } = useGetColumns(boardId);
+  const { data: ColumnData, isLoading: ColumnLoading } = useGetColumns({
+    boardId,
+  });
 
   if (ColumnLoading) {
     return (

@@ -1,18 +1,15 @@
-import { useQueryState, parseAsBoolean } from "nuqs";
+import { useQueryState, parseAsString } from "nuqs";
 
 export const useShowTaskModal = () => {
-  const [isOpen, setIsOpen] = useQueryState(
-    "show-task",
-    parseAsBoolean.withDefault(false).withOptions({ clearOnDefault: true })
-  );
+  const [id, setId] = useQueryState("show-task", parseAsString);
 
-  const open = () => setIsOpen(true);
-  const close = () => setIsOpen(false);
+  const open = (id: string) => setId(id);
+  const close = () => setId(null);
 
   return {
-    isOpen,
+    id,
     open,
     close,
-    setIsOpen,
+    setId,
   };
 };

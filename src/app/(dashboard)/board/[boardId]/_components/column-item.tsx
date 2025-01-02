@@ -13,7 +13,7 @@ type Props = {
 };
 
 export const ColumnItem = ({ data, boardId }: Props) => {
-  const [columnId, setColumnId] = useGetColumnId();
+  const { id: columnId } = useGetColumnId();
 
   const [ConfirmationDialog, confirm] = useConfirmModal({
     title: "Are you sure?",
@@ -40,7 +40,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
     );
   };
 
-  const { setIsOpen: setOpenColumnUpdateModal } = useUpdateColumnModal();
+  const { open: setOpenColumnUpdateModal } = useUpdateColumnModal();
 
   return (
     <div className="w-[260px] h-full  rounded-md">
@@ -51,10 +51,7 @@ export const ColumnItem = ({ data, boardId }: Props) => {
         </p>
         <div className="flex gap-x-1 items-center">
           <button
-            onClick={() => {
-              setColumnId(data.id);
-              setOpenColumnUpdateModal(true);
-            }}
+            onClick={() => setOpenColumnUpdateModal(data.id)}
             className="text-white hover:text-primary disabled:text-primary/50 transition"
           >
             <Edit2Icon className="size-4" />

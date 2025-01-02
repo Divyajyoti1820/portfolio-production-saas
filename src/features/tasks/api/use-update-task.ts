@@ -11,7 +11,11 @@ type ResponseType = InferResponseType<
   200
 >;
 
-export const useUpdateTask = () => {
+type Props = {
+  prevColumnId: string;
+};
+
+export const useUpdateTask = ({ prevColumnId }: Props) => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param, json }) => {
@@ -31,6 +35,8 @@ export const useUpdateTask = () => {
       queryClient.invalidateQueries({
         queryKey: ["tasks", data.columnId],
       });
+      queryClient.invalidateQueries({ queryKey: ["tasks", data.columnId] });
+      queryClient.invalidateQueries({ queryKey: ["tasks", prevColumnId] });
     },
   });
 

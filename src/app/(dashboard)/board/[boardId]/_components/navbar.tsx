@@ -21,6 +21,7 @@ import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
 import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-modal";
 import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
+import { Fragment } from "react";
 
 export const Navbar = () => {
   const router = useRouter();
@@ -29,9 +30,9 @@ export const Navbar = () => {
   const { setIsOpen: setIsOpenCreateTaskModal } = useCreateTaskModal();
 
   const { data: Boards } = useGetBoards();
-  const { setIsOpen } = useUpdateBoardModal();
+  const { open } = useUpdateBoardModal();
 
-  const { data: BoardData, isLoading: loadingBoard } = useGetBoard(boardId);
+  const { data: BoardData, isLoading: loadingBoard } = useGetBoard({ boardId });
 
   const boardDeleteMutation = useDeleteBoard();
   const [ConfirmationModal, confirm] = useConfirmModal({
@@ -65,7 +66,7 @@ export const Navbar = () => {
   };
 
   return (
-    <>
+    <Fragment>
       <ConfirmationModal />
       <nav className="bg-card h-14 w-full px-3 flex items-center justify-between">
         <div className="h-full flex items-center justify-center">
@@ -104,7 +105,7 @@ export const Navbar = () => {
           </Hint>
           <Hint label="Edit Board" align="center" side="bottom">
             <button
-              onClick={() => setIsOpen(true)}
+              onClick={() => open(boardId)}
               disabled={loadingBoard}
               className="flex items-center justify-center gap-x-1 bg-primary p-1 rounded-md hover:bg-primary/50 transition"
             >
@@ -122,6 +123,6 @@ export const Navbar = () => {
           </Hint>
         </div>
       </nav>
-    </>
+    </Fragment>
   );
 };

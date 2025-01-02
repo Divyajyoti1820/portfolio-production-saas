@@ -72,7 +72,9 @@ export const CreateTaskModal = () => {
     setIsOpen(false);
   };
 
-  const { data: columns, isLoading: columnLoading } = useGetColumns(boardId);
+  const { data: columns, isLoading: columnLoading } = useGetColumns({
+    boardId,
+  });
   /* Create Task Handler */
   const mutation = useCreateTask();
   const createTaskHandler = (e: React.FormEvent<HTMLFormElement>) => {
@@ -190,6 +192,7 @@ export const CreateTaskModal = () => {
           <DialogFooter>
             <DialogClose>
               <Button
+                type="button"
                 disabled={mutation.isPending}
                 className="bg-destructive hover:bg-destructive/50 transition"
               >

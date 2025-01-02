@@ -1,8 +1,13 @@
 import { useQueryState, parseAsString } from "nuqs";
 
 export const useGetTaskId = () => {
-  return useQueryState(
+  const [id, setId] = useQueryState(
     "taskId",
     parseAsString.withDefault("").withOptions({ clearOnDefault: true })
   );
+
+  return {
+    id,
+    setId,
+  };
 };
