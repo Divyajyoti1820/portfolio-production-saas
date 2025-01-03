@@ -5,7 +5,7 @@ import { verifyAuth } from "@hono/auth-js";
 import { zValidator } from "@hono/zod-validator";
 
 import { db } from "@/db";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, count } from "drizzle-orm";
 import { boards, columns } from "@/db/schema";
 
 const app = new Hono()
@@ -167,6 +167,37 @@ const app = new Hono()
 
       return c.json({ data: { id: id } });
     }
-  );
+  )
+  .get("/boards-count", verifyAuth(), async (c) => {
+    const auth = c.get("authUser");
+    if (!auth.token?.id) {
+      return c.json({ error: "Un-Authorized Access" }, 401);
+    }
+
+    const data = await db
+      .select({ count: count() })
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id));
+
+    const boardId = await db
+      .select({ id: boards.id })
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id))
+      .limit(1);
+
+    if (!data && !boardId) {
+      return c.json(
+        {
+          error: "[BOARDS_GET] : Failed to get boards",
+        },
+        400
+      );
+    }
+
+    return c.json({
+      count: data[0].count,
+      id: boardId[0].id === null ? null : boardId[0].id,
+    });
+  });
 
 export default app;

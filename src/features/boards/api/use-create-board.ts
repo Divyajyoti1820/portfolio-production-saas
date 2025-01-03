@@ -6,9 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 import { toast } from "sonner";
 
-type RequestType = InferRequestType<
-  (typeof client.api.boards)["$post"]
->["json"];
+type RequestType = InferRequestType<(typeof client.api.boards)["$post"]>;
 
 type ResponseType = InferResponseType<(typeof client.api.boards)["$post"], 200>;
 
@@ -16,7 +14,7 @@ export const useCreateBoard = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async ({ json }) => {
       const response = await client.api.boards.$post({ json });
 
       if (!response.ok) {

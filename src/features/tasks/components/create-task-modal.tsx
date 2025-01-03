@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import { create } from "mutative";
 
@@ -46,31 +46,38 @@ export const CreateTaskModal = () => {
   >([{ title: "", isCompleted: false }]);
 
   /* Subtask operation handler  */
-  const addSubtaskInput = () => {
+  const addSubtaskInput = useCallback(() => {
     const mutative_data = create(subtasks, (instance) => {
       instance.push({ title: "", isCompleted: false });
     });
     setSubtasks(mutative_data);
-  };
-  const updateSubtask = (index: number, value: string) => {
-    const updatedSubtasks = create(subtasks, (draft) => {
-      draft[index].title = value;
-    });
-    setSubtasks(updatedSubtasks);
-  };
-  const removeSubtask = (index: number) => {
-    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
-    setSubtasks(updatedSubtasks);
-  };
+  }, [subtasks]);
+  const updateSubtask = useCallback(
+    (index: number, value: string) => {
+      const updatedSubtasks = create(subtasks, (draft) => {
+        draft[index].title = value;
+      });
+      setSubtasks(updatedSubtasks);
+    },
+    [subtasks]
+  );
+  const removeSubtask = useCallback(
+    (index: number) => {
+      const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+      setSubtasks(updatedSubtasks);
+    },
+    [subtasks]
+  );
   /* Subtask operation handler  */
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setTitle("");
     setDescription("");
     setColumnId("");
     setSubtasks([{ title: "", isCompleted: false }]);
     setIsOpen(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { data: columns, isLoading: columnLoading } = useGetColumns({
     boardId,

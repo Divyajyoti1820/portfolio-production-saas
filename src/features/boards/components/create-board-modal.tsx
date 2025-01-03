@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import { create } from "mutative";
 
@@ -31,29 +31,36 @@ export const CreateBoardModal = () => {
   const [columns, setColumns] = useState<string[]>([""]);
 
   /* Columns Input Handling Mechanism */
-  const addColumnInput = () => {
+  const addColumnInput = useCallback(() => {
     const mutate_data = create(columns, (instance) => {
       instance.push("");
     });
     setColumns(mutate_data);
-  };
-  const updateColumn = (index: number, value: string) => {
-    const updatedColumns = create(columns, (draft) => {
-      draft[index] = value;
-    });
-    setColumns(updatedColumns);
-  };
-  const removeColumn = (index: number) => {
-    const updatedColumns = columns.filter((_, i) => i !== index);
-    setColumns(updatedColumns);
-  };
+  }, [columns]);
+  const updateColumn = useCallback(
+    (index: number, value: string) => {
+      const updatedColumns = create(columns, (draft) => {
+        draft[index] = value;
+      });
+      setColumns(updatedColumns);
+    },
+    [columns]
+  );
+  const removeColumn = useCallback(
+    (index: number) => {
+      const updatedColumns = columns.filter((_, i) => i !== index);
+      setColumns(updatedColumns);
+    },
+    [columns]
+  );
   /* Columns Input Handling Mechanism */
 
-  const removeHandler = () => {
+  const removeHandler = useCallback(() => {
     setTitle("");
     setColumns([""]);
     setIsOpen(false);
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* Create board Form Handler */
   const { mutate: CreateBoard, isPending: pendingCreateBoard } =
@@ -62,7 +69,7 @@ export const CreateBoardModal = () => {
     e.preventDefault();
 
     CreateBoard(
-      { title, columns },
+      { json: { title, columns } },
       {
         onSuccess: () => {
           removeHandler();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 
 import {
   Select,
@@ -75,32 +75,39 @@ export const UpdateTaskForm = ({
   >(initialData.subtasks);
 
   /* Subtask operation handler  */
-  const addSubtaskInput = () => {
+  const addSubtaskInput = useCallback(() => {
     const mutated_value = create(subtasks, (draft) => {
       draft.push({ title: "", isCompleted: false });
     });
     setSubtasks(mutated_value);
-  };
-  const updateSubtask = (index: number, value: string) => {
-    const updatedSubtasks = create(subtasks, (draft) => {
-      draft[index].title = value;
-    });
-    setSubtasks(updatedSubtasks);
-  };
-  const removeSubtask = (index: number) => {
-    const updatedSubtasks = subtasks.filter((_, i) => i !== index);
-    setSubtasks(updatedSubtasks);
-  };
+  }, [subtasks]);
+  const updateSubtask = useCallback(
+    (index: number, value: string) => {
+      const updatedSubtasks = create(subtasks, (draft) => {
+        draft[index].title = value;
+      });
+      setSubtasks(updatedSubtasks);
+    },
+    [subtasks]
+  );
+  const removeSubtask = useCallback(
+    (index: number) => {
+      const updatedSubtasks = subtasks.filter((_, i) => i !== index);
+      setSubtasks(updatedSubtasks);
+    },
+    [subtasks]
+  );
   /* Subtask operation handler  */
 
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setTitle("");
     setDescription("");
     setSubtasks([{ title: "", isCompleted: false }]);
     setColumnId("");
     onCancel?.();
     close();
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /* Update Task Handler */
   const mutation = useUpdateTask({ prevColumnId: initialData.columnId });
