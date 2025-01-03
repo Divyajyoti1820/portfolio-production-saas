@@ -4,24 +4,28 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ColumnItem } from "./column-item";
-import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { useGetColumns } from "@/features/columns/api/use-get-columns";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertOctagonIcon, PlusIcon } from "lucide-react";
 import { useCreateColumnModal } from "@/features/columns/store/use-create-column-modal";
 import { MAX_COLUMNS } from "@/lib/constants";
 
-export const ColumnContent = () => {
+type Props = {
+  columns: {
+    boardId: string;
+    title: string;
+    id: string;
+    createdAt: string;
+    updatedAt: string | null;
+  }[];
+  columnLoadingStatus: boolean;
+};
+
+export const ColumnContent = ({ columns, columnLoadingStatus }: Props) => {
   const { open } = useSidebar();
-  const boardId = useGetBoardId();
   const { setIsOpen: setIsCreateColumnModalOpen } = useCreateColumnModal();
 
-  const { data: ColumnData, isLoading: ColumnLoading } = useGetColumns({
-    boardId,
-  });
-
-  if (ColumnLoading) {
+  if (columnLoadingStatus) {
     return (
       <ScrollArea
         className={cn(
@@ -38,7 +42,7 @@ export const ColumnContent = () => {
       </ScrollArea>
     );
   }
-  if (!ColumnData) {
+  if (!columns) {
     return (
       <ScrollArea
         className={cn(
@@ -63,10 +67,10 @@ export const ColumnContent = () => {
       )}
     >
       <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex gap-x-3">
-        {ColumnData.map((column) => (
-          <ColumnItem key={column.id} data={column} boardId={boardId} />
+        {columns.map((column) => (
+          <ColumnItem key={column.id} data={column} />
         ))}
-        {ColumnData.length !== MAX_COLUMNS && (
+        {columns.length !== MAX_COLUMNS && (
           <div
             onClick={() => setIsCreateColumnModalOpen(true)}
             className="w-[180px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 rounded-md hover:bg-black transition text-blue-500 cursor-pointer"

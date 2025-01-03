@@ -13,7 +13,7 @@ export const DashboardClient = () => {
     return (
       <div className="w-full h-full flex flex-col items-center gap-y-2 justify-center">
         <Loader2Icon className="size-10 animate-spin text-primary" />
-        <p className="text-lg text-secondary">Loading Boards.....</p>
+        <p className="text-sm text-muted-foreground">Loading Boards</p>
       </div>
     );
   }
@@ -22,11 +22,11 @@ export const DashboardClient = () => {
     return <PageError />;
   }
 
-  if (data.count === 0) {
+  if (data.count === 0 && data.id === null) {
     router.push("/create");
   }
 
-  if (data.count > 0 && data.id !== null) {
+  if (data.id !== null) {
     router.push(`/board/${data.id}`);
   }
 

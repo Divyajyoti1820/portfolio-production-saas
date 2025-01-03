@@ -9,19 +9,38 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
+  SidebarMenu,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-import { ChevronsLeftIcon, ChevronsRightIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  AlertOctagonIcon,
+  ChevronsLeftIcon,
+  ChevronsRightIcon,
+} from "lucide-react";
 
 import { UserInfo } from "./user-info";
 import { MainContent } from "./main-content";
 import { LogoutButton } from "./logout-button";
 import { Hint } from "@/components/custom-components/hint";
+import { useGetBoards } from "@/features/boards/api/use-get-boards";
+import { useGetBoardId } from "@/hooks/use-get-board-id";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useSession } from "next-auth/react";
 
 export const MainSidebar = () => {
   const router = useRouter();
+  const { status, data: user } = useSession();
   const { open, setOpen, isMobile } = useSidebar();
+
+  const currentBoardId = useGetBoardId();
+  const { data: boards, isLoading: boardsLoading } = useGetBoards();
+
+  if (status === "unauthenticated") {
+    router.push("/sign-in");
+    return;
+  }
 
   return (
     <Sidebar collapsible="icon" className="flex items-center">
@@ -47,10 +66,67 @@ export const MainSidebar = () => {
         </div>
       </SidebarHeader>
       <SidebarContent className="py-3">
-        <MainContent open={open} />
+        {boardsLoading && (
+          <SidebarMenu className="p-2 h-full flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Skeleton
+                key={i}
+                className={cn("bg-black w-full h-10", !open && "size-10")}
+              />
+            ))}
+          </SidebarMenu>
+        )}
+        {!boardsLoading && boards && (
+          <MainContent
+            open={open}
+            data={boards}
+            currentBoardId={currentBoardId}
+            isAuthenticated={status === "authenticated"}
+          />
+        )}
+        {!boardsLoading && !boards && (
+          <SidebarMenu className="h-full flex flex-col items-center justify-center">
+            <AlertCircleIcon className="size-8 text-destructive" />
+            {open && (
+              <p className="font-semibold text-destructive">
+                Something went wrong
+              </p>
+            )}
+          </SidebarMenu>
+        )}
       </SidebarContent>
       <SidebarFooter>
-        <UserInfo open={open} />
+        {status === "loading" && (
+          <div className="w-full flex items-center justify-center p-1 bg-black rounded-lg">
+            <Skeleton className="size-10" />
+            <div
+              className={cn(
+                "flex-1 flex flex-col gap-y-2.5 items-center justify-center transition",
+                !open && "hidden"
+              )}
+            >
+              <Skeleton className="w-32 h-2" />
+              <Skeleton className="w-36 h-2" />
+            </div>
+          </div>
+        )}
+        {status !== "authenticated" && !user && (
+          <div className="w-full flex items-center justify-center p-1 bg-black rounded-lg">
+            <div className="size-10 flex items-center justify-center">
+              <AlertOctagonIcon className="text-destructive" />
+            </div>
+            <div
+              className={cn(
+                "flex-1 flex flex-col gap-y-2.5 items-center justify-center transition",
+                !open && "hidden"
+              )}
+            >
+              <p className="text-xs text-destructive">Something went wrong</p>
+            </div>
+          </div>
+        )}
+        {user && <UserInfo open={open} data={user} />}
+
         {!open && <LogoutButton />}
         <Hint hide={open} label="Open Sidebar" align="center" side="right">
           <button

@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useGetColumnId } from "@/hooks/use-get-column-id";
-import { useGetTaskId } from "@/hooks/use-get-task-id";
 
 import { useCopyTask } from "@/features/tasks/api/use-copy-task";
 import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
@@ -35,8 +33,7 @@ type Props = {
 };
 
 export const TaskItem = ({ data, boardId }: Props) => {
-  const { id: taskId } = useGetTaskId();
-  const { id: columnId, setId: setColumnId } = useGetColumnId();
+  const { setId: setColumnId } = useGetColumnId();
 
   const { open: setIsOpenUpdateTaskModal } = useUpdateTaskModal();
   const { open: setIsOpenShowTaskModal } = useShowTaskModal();
@@ -53,7 +50,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
     if (!ok) return;
 
     removeTask.mutate(
-      { param: { id: taskId }, json: { boardId, columnId } },
+      { param: { id: data.id }, json: { boardId, columnId: data.columnId } },
       {
         onSuccess: () => {
           toast.success("Removed task successfully");
