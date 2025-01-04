@@ -54,6 +54,17 @@ const app = new Hono()
         return c.json({ error: "[TASKS_CREATE] : Column not found" }, 400);
       }
 
+      const highestPositionTask = await db
+        .select()
+        .from(tasks)
+        .orderBy(desc(tasks.position))
+        .limit(1);
+
+      const newPosition =
+        highestPositionTask.length > 0
+          ? highestPositionTask[0].position + 1
+          : 1;
+
       const data = await db
         .insert(tasks)
         .values({
@@ -61,6 +72,7 @@ const app = new Hono()
           description,
           columnId,
           subtasks,
+          position: newPosition,
         })
         .returning();
 
@@ -111,7 +123,7 @@ const app = new Hono()
         .select()
         .from(tasks)
         .where(eq(tasks.columnId, columnId))
-        .orderBy(desc(tasks.createdAt));
+        .orderBy(desc(tasks.position));
 
       if (!data) {
         return c.json({ error: "[TASKS_GET] : Failed to get tasks" }, 400);
@@ -277,6 +289,7 @@ const app = new Hono()
           description,
           columnId: newColumnId,
           subtasks,
+          updatedAt: new Date(),
         })
         .where(eq(tasks.id, id))
         .returning();
@@ -341,6 +354,7 @@ const app = new Hono()
         .update(tasks)
         .set({
           subtasks,
+          updatedAt: new Date(),
         })
         .where(eq(tasks.id, id))
         .returning();
@@ -392,6 +406,17 @@ const app = new Hono()
 
       const { title, description, columnId: copyColumnId, subtasks } = task[0];
 
+      const highestPositionTask = await db
+        .select()
+        .from(tasks)
+        .orderBy(desc(tasks.position))
+        .limit(1);
+
+      const newPosition =
+        highestPositionTask.length > 0
+          ? highestPositionTask[0].position + 1
+          : 1;
+
       const data = await db
         .insert(tasks)
         .values({
@@ -399,6 +424,7 @@ const app = new Hono()
           description,
           columnId: copyColumnId,
           subtasks,
+          position: newPosition,
         })
         .returning();
 

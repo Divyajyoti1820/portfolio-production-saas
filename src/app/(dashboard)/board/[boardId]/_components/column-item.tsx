@@ -10,6 +10,8 @@ import { ScrollBar } from "@/components/ui/scroll-area";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { DragDropContext } from "@hello-pangea/dnd";
+
 type Props = {
   data: { id: string; boardId: string; title: string };
 };
@@ -47,6 +49,8 @@ export const ColumnItem = ({ data }: Props) => {
 
   const { open: setOpenColumnUpdateModal } = useUpdateColumnModal();
 
+  const onDragEnd = () => {};
+
   return (
     <div className="w-[260px] h-full  rounded-md">
       <ConfirmationDialog />
@@ -70,28 +74,32 @@ export const ColumnItem = ({ data }: Props) => {
         </div>
       </div>
 
-      {tasksLoading && (
-        <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
-          <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="w-[260px] h-full bg-black/40" />
-            ))}
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )}
+      <DragDropContext onDragEnd={onDragEnd}>
+        {tasksLoading && (
+          <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
+            <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
+              {[...Array(4)].map((_, i) => (
+                <Skeleton key={i} className="w-[260px] h-full bg-black/40" />
+              ))}
+            </div>
+            <ScrollBar orientation="vertical" />
+          </ScrollArea>
+        )}
 
-      {!tasksLoading && !tasks && (
-        <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
-          <div className="h-full w-[260px] flex flex-col gap-y-3 items-center justify-center bg-black/20">
-            <AlertOctagonIcon className="text-destructive" />
-            <p className="text-destructive text-sm">Something went wrong</p>
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
-      )}
+        {!tasksLoading && !tasks && (
+          <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
+            <div className="h-full w-[260px] flex flex-col gap-y-3 items-center justify-center bg-black/20">
+              <AlertOctagonIcon className="text-destructive" />
+              <p className="text-destructive text-sm">Something went wrong</p>
+            </div>
+            <ScrollBar orientation="vertical" />
+          </ScrollArea>
+        )}
 
-      {tasks && <TaskList data={tasks} boardId={data.boardId} />}
+        {tasks && (
+          <TaskList data={tasks} boardId={data.boardId} columnId={data.id} />
+        )}
+      </DragDropContext>
     </div>
   );
 };

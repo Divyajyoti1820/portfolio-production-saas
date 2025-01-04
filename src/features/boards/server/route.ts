@@ -174,6 +174,20 @@ const app = new Hono()
       return c.json({ error: "Un-Authorized Access" }, 401);
     }
 
+    const boardsByUser = await db
+      .select()
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id))
+      .orderBy(asc(boards.createdAt));
+
+    if (!boardsByUser) {
+      return c.json({ error: "[BOARDS_GET] : Failed to get boards" }, 400);
+    }
+
+    if (boardsByUser.length === 0) {
+      return c.json({ data: { count: 0, id: null } });
+    }
+
     const data = await db
       .select({ count: count() })
       .from(boards)
@@ -194,9 +208,15 @@ const app = new Hono()
       );
     }
 
+    if (data[0].count === 0 && boardId[0].id === null) {
+      return c.json({ data: { count: 0, id: null } });
+    }
+
     return c.json({
-      count: data[0].count,
-      id: boardId[0].id === null ? null : boardId[0].id,
+      data: {
+        count: data[0].count,
+        id: boardId[0].id,
+      },
     });
   });
 

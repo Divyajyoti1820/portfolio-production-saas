@@ -14,6 +14,7 @@
   "dependencies": {
     "@auth/core": "^0.37.2",
     "@auth/drizzle-adapter": "^1.7.2",
+    "@hello-pangea/dnd": "^17.0.0",
     "@hono/auth-js": "^1.0.12",
     "@hono/zod-validator": "^0.4.1",
     "@hookform/resolvers": "^3.9.1",

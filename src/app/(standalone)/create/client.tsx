@@ -20,8 +20,10 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useRouter } from "next/navigation";
 
 export const CreateClient = () => {
+  const router = useRouter();
   const [title, setTitle] = useState<string>("");
   const [columns, setColumns] = useState<string[]>([""]);
 
@@ -52,9 +54,10 @@ export const CreateClient = () => {
     createBoard(
       { json: { title, columns } },
       {
-        onSuccess: () => {
+        onSuccess: ({ data }) => {
           setTitle("");
           setColumns([""]);
+          router.push(`/board/${data.id}`);
         },
       }
     );
