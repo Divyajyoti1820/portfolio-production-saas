@@ -10,8 +10,6 @@ import { PageError } from "@/components/custom-components/page-error";
 import { useGetBoard } from "@/features/boards/api/use-get-board";
 import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { Loader2Icon } from "lucide-react";
-import { useGetColumns } from "@/features/columns/api/use-get-columns";
-
 export const BoardIdClient = () => {
   const router = useRouter();
   const presentBoardId = useGetBoardId();
@@ -22,11 +20,7 @@ export const BoardIdClient = () => {
     boardId: presentBoardId,
   });
 
-  const { data: columnData, isLoading: columnDataLoading } = useGetColumns({
-    boardId: presentBoardId,
-  });
-
-  const isLoading = boardInfoLoading || boardDataLoading || columnDataLoading;
+  const isLoading = boardInfoLoading || boardDataLoading;
 
   if (isLoading) {
     return (
@@ -37,7 +31,7 @@ export const BoardIdClient = () => {
     );
   }
 
-  if (!boardsInfo || !boardData || !columnData) {
+  if (!boardsInfo || !boardData) {
     return <PageError />;
   }
 
@@ -62,10 +56,7 @@ export const BoardIdClient = () => {
         boardsInfo={boardsInfo}
         boardLoadingStatus={boardDataLoading}
       />
-      <ColumnContent
-        columns={columnData}
-        columnLoadingStatus={columnDataLoading}
-      />
+      <ColumnContent boardId={presentBoardId} />
     </div>
   );
 };

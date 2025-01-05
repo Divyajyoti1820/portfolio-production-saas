@@ -32,9 +32,10 @@ type Props = {
     position: number;
   };
   boardId: string;
+  index: number;
 };
 
-export const TaskItem = ({ data, boardId }: Props) => {
+export const TaskItem = ({ data, boardId, index }: Props) => {
   const { setId: setColumnId } = useGetColumnId();
 
   const { open: setIsOpenUpdateTaskModal } = useUpdateTaskModal();
@@ -92,7 +93,7 @@ export const TaskItem = ({ data, boardId }: Props) => {
   const borderColor = GetRandomBorderColor();
 
   return (
-    <Draggable draggableId={data.id} index={data.position}>
+    <Draggable draggableId={data.id} index={index}>
       {(provided) => (
         <div
           ref={provided.innerRef}

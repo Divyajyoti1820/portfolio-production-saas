@@ -1,3 +1,4 @@
+import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { InferResponseType } from "hono";
@@ -14,6 +15,7 @@ type ResponseType = InferResponseType<
 
 export const useRemoveTask = () => {
   const queryClient = useQueryClient();
+  const boardId = useGetBoardId();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":id"].$delete({
@@ -30,6 +32,9 @@ export const useRemoveTask = () => {
     onSuccess: ({ data }) => {
       queryClient.invalidateQueries({
         queryKey: ["tasks", data.columnId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
       });
     },
   });

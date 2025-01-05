@@ -1,3 +1,4 @@
+import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -14,6 +15,7 @@ type ResponseType = InferResponseType<
 
 export const useUpdateSubtask = () => {
   const queryClient = useQueryClient();
+  const boardId = useGetBoardId();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks["subtasks"][":columnId"][
@@ -32,7 +34,9 @@ export const useUpdateSubtask = () => {
 
     onSuccess: ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["task", data.id] });
-      queryClient.invalidateQueries({ queryKey: ["tasks", data.columnId] });
+      queryClient.invalidateQueries({
+        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+      });
     },
   });
 

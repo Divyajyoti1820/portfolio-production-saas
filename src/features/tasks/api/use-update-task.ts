@@ -1,3 +1,4 @@
+import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { client } from "@/lib/hono";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
@@ -17,6 +18,7 @@ type Props = {
 
 export const useUpdateTask = ({ prevColumnId }: Props) => {
   const queryClient = useQueryClient();
+  const boardId = useGetBoardId();
   const mutation = useMutation<ResponseType, Error, RequestType>({
     mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":columnId"][":id"].$patch({
@@ -37,6 +39,9 @@ export const useUpdateTask = ({ prevColumnId }: Props) => {
       });
       queryClient.invalidateQueries({ queryKey: ["tasks", data.columnId] });
       queryClient.invalidateQueries({ queryKey: ["tasks", prevColumnId] });
+      queryClient.invalidateQueries({
+        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+      });
     },
   });
 

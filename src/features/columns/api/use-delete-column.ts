@@ -29,6 +29,9 @@ export const useDeleteColumn = () => {
     },
     onSuccess: ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
+      queryClient.invalidateQueries({
+        queryKey: ["columns-with-tasks", { boardId: data.boardId }],
+      });
       queryClient.invalidateQueries({ queryKey: ["columns", data.boardId] });
     },
   });

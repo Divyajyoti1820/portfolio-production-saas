@@ -3,10 +3,10 @@ import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import z from "zod";
 
-import { boards, columns } from "@/db/schema";
+import { boards, columns, tasks } from "@/db/schema";
 import { verifyAuth } from "@hono/auth-js";
 import { db } from "@/db";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 
 const app = new Hono()
   .get(
@@ -204,6 +204,62 @@ const app = new Hono()
       }
 
       return c.json({ data: data[0] });
+    }
+  )
+  .post(
+    "/columns-with-tasks/:boardId",
+    verifyAuth(),
+    zValidator("param", z.object({ boardId: z.string() })),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { boardId } = c.req.valid("param");
+
+      const board = await db
+        .select({ id: boards.id })
+        .from(boards)
+        .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
+
+      if (!board || board.length === 0) {
+        return c.json(
+          { error: "[COLUMNS_WITH_TASKS_GET] : Board not found" },
+          400
+        );
+      }
+
+      const columnsData = await db
+        .select()
+        .from(columns)
+        .where(eq(columns.boardId, boardId))
+        .orderBy(asc(columns.createdAt));
+
+      if (!columnsData || columnsData.length === 0) {
+        return c.json({ data: [] });
+      }
+
+      const allTasks = await db
+        .select()
+        .from(tasks)
+        .where(
+          inArray(
+            tasks.columnId,
+            columnsData.map((col) => col.id)
+          )
+        );
+
+      const results = columnsData.map((column) => ({
+        column: { ...column },
+        tasks: allTasks.filter((task) => task.columnId === column.id),
+      }));
+
+      if (!results || results.length === 0) {
+        return c.json({ data: [] });
+      }
+
+      return c.json({ data: results });
     }
   );
 
