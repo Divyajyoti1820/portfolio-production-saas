@@ -248,7 +248,8 @@ const app = new Hono()
             tasks.columnId,
             columnsData.map((col) => col.id)
           )
-        );
+        )
+        .orderBy(asc(tasks.position));
 
       const results = columnsData.map((column) => ({
         column: { ...column },

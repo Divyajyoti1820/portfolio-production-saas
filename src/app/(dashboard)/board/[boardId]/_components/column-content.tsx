@@ -7,14 +7,20 @@ import { cn } from "@/lib/utils";
 import { ColumnItem } from "./column-item";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertOctagonIcon, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import { useCreateColumnModal } from "@/features/columns/store/use-create-column-modal";
 import { MAX_COLUMNS } from "@/lib/constants";
-import { useGetColumnsWithTasks } from "@/features/columns/api/use-get-columns-with-tasks";
+
 import { DragDropContext, type DropResult } from "@hello-pangea/dnd";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { ColumnWithTasks } from "@/features/columns/types";
+import { useBulkUpdateTasks } from "@/features/tasks/api/use-bulk-update-tasks";
+
+import { toast } from "sonner";
 
 type Props = {
+  mainData: ColumnWithTasks[];
+  mainDataLoadingStatus: boolean;
   boardId: string;
 };
 
@@ -26,21 +32,23 @@ function reOrder<T>(list: T[], startIndex: number, endIndex: number) {
   return result;
 }
 
-export const ColumnContent = ({ boardId }: Props) => {
+export const ColumnContent = ({
+  mainData,
+  mainDataLoadingStatus,
+  boardId,
+}: Props) => {
   const { open } = useSidebar();
   const { setIsOpen: setIsCreateColumnModalOpen } = useCreateColumnModal();
 
-  const { data: mainData, isLoading: mainDataLoading } = useGetColumnsWithTasks(
-    { boardId: boardId }
-  );
-
   const [data, setData] = useState(mainData);
+
+  const { mutate: bulkUpdate } = useBulkUpdateTasks();
 
   useEffect(() => {
     setData(mainData);
   }, [mainData]);
 
-  const onDragEnd = useCallback((result: DropResult) => {
+  const onDragEnd = (result: DropResult) => {
     const { source, destination } = result;
     if (!destination) {
       return;
@@ -79,20 +87,38 @@ export const ColumnContent = ({ boardId }: Props) => {
     }
 
     if (source.droppableId === destination.droppableId) {
-      const reorderedTask = reOrder(
+      const reorderedTasks = reOrder(
         sourceList.tasks,
         source.index,
         destination.index
       );
 
-      reorderedTask.forEach((task, idx) => {
+      reorderedTasks.forEach((task, idx) => {
         task.position = idx;
       });
 
-      sourceList.tasks = reorderedTask;
-      setData(newData);
+      sourceList.tasks = reorderedTasks;
 
-      //Trigger Mutation to update tasks
+      const updatePayload: {
+        id: string;
+        columnId: string;
+        position: number;
+      }[] = reorderedTasks.map((task) => ({
+        id: task.id,
+        columnId: task.columnId,
+        position: task.position,
+      }));
+
+      const isValidPayload = updatePayload.every(
+        (task) => task.id && task.columnId && typeof task.position === "number"
+      );
+
+      if (isValidPayload) {
+        setData(newData);
+        bulkUpdate({ json: { boardId, tasks: updatePayload } });
+      } else {
+        toast.error("Payload error");
+      }
     } else {
       const [movedTask] = sourceList.tasks.splice(source.index, 1);
       movedTask.columnId = destination.droppableId;
@@ -107,13 +133,33 @@ export const ColumnContent = ({ boardId }: Props) => {
         task.position = idx;
       });
 
-      setData(newData);
-      //Trigger mutation of API
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+      const updatePayload: {
+        id: string;
+        columnId: string;
+        position: number;
+      }[] = destList.tasks.map((task) => ({
+        id: task.id,
+        columnId: task.columnId,
+        position: task.position,
+      }));
 
-  if (mainDataLoading) {
+      console.log(updatePayload);
+
+      //create isValidPayload
+      const isValidPayload = updatePayload.every(
+        (task) => task.id && task.columnId && typeof task.position === "number"
+      );
+
+      if (isValidPayload) {
+        setData(newData);
+        bulkUpdate({ json: { boardId, tasks: updatePayload } });
+      } else {
+        toast.error("Payload error");
+      }
+    }
+  };
+
+  if (mainDataLoadingStatus) {
     return (
       <ScrollArea
         className={cn(
@@ -125,22 +171,6 @@ export const ColumnContent = ({ boardId }: Props) => {
           {[...Array(4)].map((_, i) => (
             <Skeleton key={i} className="w-[260px] h-full bg-black/50" />
           ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
-    );
-  }
-  if (!mainData) {
-    return (
-      <ScrollArea
-        className={cn(
-          " w-[calc(100vw-4rem)]  h-[calc(100vh-3.5rem)]  p-1 overflow-x-auto",
-          open && "w-[calc(100vw-16rem)]"
-        )}
-      >
-        <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex flex-col items-center justify-center gap-x-3 text-destructive">
-          <AlertOctagonIcon className="size-10" />
-          <p className="text-2xl">Something went wrong</p>
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
@@ -160,7 +190,7 @@ export const ColumnContent = ({ boardId }: Props) => {
             <ColumnItem
               key={item.column.id}
               data={item}
-              loadingStatus={mainDataLoading}
+              loadingStatus={mainDataLoadingStatus}
             />
           ))}
           {mainData.length !== MAX_COLUMNS && (

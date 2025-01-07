@@ -434,6 +434,65 @@ const app = new Hono()
 
       return c.json({ data: data[0] });
     }
+  )
+  .patch(
+    "/bulk-update-tasks",
+    verifyAuth(),
+    zValidator(
+      "json",
+      z.object({
+        boardId: z.string(),
+        tasks: z.array(
+          z.object({
+            id: z.string(),
+            columnId: z.string(),
+            position: z.number().min(0).max(10),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { boardId, tasks: updatedTasks } = c.req.valid("json");
+
+      if (!boardId || !updatedTasks) {
+        return c.json({ error: "Missing required fields" }, 400);
+      }
+
+      const board = await db
+        .select({ id: boards.id })
+        .from(boards)
+        .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
+      if (!board || board.length === 0) {
+        return c.json({ error: "Board not found" }, 400);
+      }
+
+      const updateTasks = await Promise.all(
+        updatedTasks.map(async (task) => {
+          const { id, columnId, position } = task;
+          const data = await db
+            .update(tasks)
+            .set({
+              columnId,
+              position,
+            })
+            .where(eq(tasks.id, id))
+            .returning({ id: tasks.id });
+
+          return data[0];
+        })
+      );
+
+      if (!updateTasks || updateTasks.length === 0) {
+        return c.json("Failed to update tasks", 400);
+      }
+
+      return c.json({ data: updateTasks });
+    }
   );
 
 export default app;

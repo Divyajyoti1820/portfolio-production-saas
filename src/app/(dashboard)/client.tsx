@@ -18,16 +18,16 @@ export const DashboardClient = () => {
     );
   }
 
-  if (!data) {
+  if (!isLoading && !data) {
     return <PageError />;
   }
 
-  if (data.count === 0 && data.id === null) {
+  if (!isLoading && data?.count === 0 && data?.id === null) {
     router.push("/create");
   }
 
-  if (data.id !== null) {
-    router.push(`/board/${data.id}`);
+  if (data?.id !== null) {
+    router.push(`/board/${data?.id}`);
   }
 
   return null;

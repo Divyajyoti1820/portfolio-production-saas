@@ -11,9 +11,9 @@ type Props = {
 
 export const TaskList = ({ data }: Props) => {
   return (
-    <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
-      <Droppable droppableId={data.column.id}>
-        {(provided) => (
+    <Droppable droppableId={data.column.id}>
+      {(provided) => (
+        <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
           <div
             {...provided.droppableProps}
             ref={provided.innerRef}
@@ -27,11 +27,11 @@ export const TaskList = ({ data }: Props) => {
                 index={index}
               />
             ))}
-            {provided.placeholder}
           </div>
-        )}
-      </Droppable>
-      <ScrollBar orientation="vertical" />
-    </ScrollArea>
+          {provided.placeholder}
+          <ScrollBar orientation="vertical" />
+        </ScrollArea>
+      )}
+    </Droppable>
   );
 };
