@@ -1,10 +1,9 @@
 /* eslint-disable prefer-const */
 "use client";
 
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useSidebar } from "@/components/ui/sidebar";
 import { cn } from "@/lib/utils";
 import { ColumnItem } from "./column-item";
+import { useSidebar } from "@/components/ui/sidebar";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusIcon } from "lucide-react";
@@ -142,10 +141,6 @@ export const ColumnContent = ({
         columnId: task.columnId,
         position: task.position,
       }));
-
-      console.log(updatePayload);
-
-      //create isValidPayload
       const isValidPayload = updatePayload.every(
         (task) => task.id && task.columnId && typeof task.position === "number"
       );
@@ -161,50 +156,44 @@ export const ColumnContent = ({
 
   if (mainDataLoadingStatus) {
     return (
-      <ScrollArea
+      <div
         className={cn(
-          " w-[calc(100vw-4rem)]  h-[calc(100vh-3.5rem)]  p-1 overflow-x-auto",
-          open && "w-[calc(100vw-16rem)]"
+          "w-[calc(100vw-4rem)] h-[calc(100vh-3.5rem)] whitespace-nowrap flex gap-x-3",
+          open && "w-[calc(100vw-1rem)]"
         )}
       >
-        <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex gap-x-3">
-          {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="w-[260px] h-full bg-black/50" />
-          ))}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="w-[260px] h-full bg-black/50" />
+        ))}
+      </div>
     );
   }
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <ScrollArea
+      <div
         className={cn(
-          " w-[calc(100vw-4rem)]  h-[calc(100vh-3.5rem)]  p-1 overflow-x-auto",
-          open && "w-[calc(100vw-16rem)]"
+          "w-[calc(100vw-4rem)] h-[calc(100vh-3.5rem)] whitespace-nowrap p-1 flex gap-x-3",
+          open && "w-[calc(100vw-12rem)]"
         )}
       >
-        <div className="w-full h-[calc(100vh-4rem)] whitespace-nowrap flex gap-x-3">
-          {mainData.map((item) => (
-            <ColumnItem
-              key={item.column.id}
-              data={item}
-              loadingStatus={mainDataLoadingStatus}
-            />
-          ))}
-          {mainData.length !== MAX_COLUMNS && (
-            <div
-              onClick={() => setIsCreateColumnModalOpen(true)}
-              className="w-[180px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 rounded-md hover:bg-black transition text-blue-500 cursor-pointer"
-            >
-              <PlusIcon className="size-8" />
-              <p className="text-md font-semibold">Add New Column</p>
-            </div>
-          )}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+        {mainData.map((item) => (
+          <ColumnItem
+            key={item.column.id}
+            data={item}
+            loadingStatus={mainDataLoadingStatus}
+          />
+        ))}
+        {mainData.length !== MAX_COLUMNS && (
+          <div
+            onClick={() => setIsCreateColumnModalOpen(true)}
+            className="w-[180px] h-full ml-auto flex flex-col items-center justify-center bg-black/60 rounded-md hover:bg-black transition text-blue-500 cursor-pointer"
+          >
+            <PlusIcon className="size-8" />
+            <p className="text-md font-semibold">Add New Column</p>
+          </div>
+        )}
+      </div>
     </DragDropContext>
   );
 };

@@ -14,7 +14,6 @@ import { CopyIcon, EditIcon, TrashIcon } from "lucide-react";
 
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { Draggable } from "@hello-pangea/dnd";
 
 type Props = {
   data: {
@@ -29,10 +28,9 @@ type Props = {
     position: number;
   };
   boardId: string;
-  index: number;
 };
 
-export const TaskItem = ({ data, boardId, index }: Props) => {
+export const TaskItem = ({ data, boardId }: Props) => {
   const { setId: setColumnId } = useGetColumnId();
 
   const { open: setIsOpenUpdateTaskModal } = useUpdateTaskModal();
@@ -88,64 +86,57 @@ export const TaskItem = ({ data, boardId, index }: Props) => {
   /* No. of completed Subtask */
 
   return (
-    <Draggable draggableId={data.id} index={index}>
-      {(provided) => (
-        <div
-          ref={provided.innerRef}
-          {...provided.draggableProps}
-          {...provided.dragHandleProps}
-          className={cn(
-            "w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-2"
-          )}
-          style={{ borderBottomColor: getTaskColor(data.position) }}
-        >
-          <ConfirmationDialog />
-          <div
-            onClick={() => {
-              setColumnId(data.columnId);
-              setIsOpenShowTaskModal(data.id);
-            }}
-            className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center p-2 hover:bg-black transition cursor-pointer"
-          >
-            <p className="text-sm text-indigo-500 font-bold">
-              {data.title.length > 25
-                ? `${CapitalizeFirstLetter(data.title.slice(0, 24))}...`
-                : `${CapitalizeFirstLetter(data.title)}`}
-            </p>
-            <p className="text-[10px] text-wrap text-muted-foreground">
-              {CapitalizeFirstLetter(data.description.slice(0, 100))}.....
-            </p>
-            <p className="text-xs">
-              {completedSubtaskCount} of {data.subtasks.length}{" "}
-              <span className="text-blue-500 font-medium">Subtasks</span>
-            </p>
-          </div>
-          <div className="h-full w-[15%] flex flex-col items-center justify-center gap-y-3">
-            <button
-              disabled={copyTask.isPending}
-              onClick={copyTaskHandler}
-              className="bg-green-500 p-1 rounded-md hover:bg-green-500/50 transition"
-            >
-              <CopyIcon className="size-4" />
-            </button>
-            <button
-              onClick={() => {
-                setColumnId(data.columnId);
-                setIsOpenUpdateTaskModal(data.id);
-              }}
-              className="bg-blue-700 p-1 rounded-md hover:bg-blue-500 transition"
-            >
-              <EditIcon className="size-4" />
-            </button>
-            <button
-              onClick={removeTaskHandler}
-              className="bg-red-800 p-1 rounded-md hover:bg-destructive transition"
-            >
-              <TrashIcon className="size-4" />
-            </button>
-          </div>
-        </div>
+    <div
+      className={cn(
+        "w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-2"
       )}
-    </Draggable>
+      style={{ borderBottomColor: getTaskColor(data.position) }}
+    >
+      <ConfirmationDialog />
+      <div
+        onClick={() => {
+          setColumnId(data.columnId);
+          setIsOpenShowTaskModal(data.id);
+        }}
+        className="h-full w-[85%] flex flex-1 flex-col gap-y-2 items-start justify-center p-2 hover:bg-black transition cursor-pointer"
+      >
+        <p className="text-sm text-indigo-500 font-bold">
+          {data.title.length > 25
+            ? `${CapitalizeFirstLetter(data.title.slice(0, 24))}...`
+            : `${CapitalizeFirstLetter(data.title)}`}
+        </p>
+        <p className="text-[10px] text-wrap text-muted-foreground">
+          {CapitalizeFirstLetter(data.description.slice(0, 100))}.....
+        </p>
+        <p className="text-xs">
+          {completedSubtaskCount} of {data.subtasks.length}{" "}
+          <span className="text-blue-500 font-medium">Subtasks</span>
+        </p>
+      </div>
+      <div className="h-full w-[15%] flex flex-col items-center justify-center gap-y-3">
+        <button
+          disabled={copyTask.isPending}
+          onClick={copyTaskHandler}
+          className="bg-green-500 p-1 rounded-md hover:bg-green-500/50 transition"
+        >
+          <CopyIcon className="size-4" />
+        </button>
+        <button
+          onClick={() => {
+            setColumnId(data.columnId);
+            setIsOpenUpdateTaskModal(data.id);
+          }}
+          className="bg-blue-700 p-1 rounded-md hover:bg-blue-500 transition"
+        >
+          <EditIcon className="size-4" />
+        </button>
+        <button
+          onClick={removeTaskHandler}
+          className="bg-red-800 p-1 rounded-md hover:bg-destructive transition"
+        >
+          <TrashIcon className="size-4" />
+        </button>
+      </div>
+    </div>
   );
 };

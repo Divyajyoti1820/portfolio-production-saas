@@ -4,9 +4,18 @@ import { useRouter } from "next/navigation";
 import { useGetBoardCount } from "@/features/boards/api/use-get-board-count";
 import { Loader2Icon } from "lucide-react";
 import { PageError } from "@/components/custom-components/page-error";
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const DashboardClient = () => {
   const router = useRouter();
+  const isMobile = useIsMobile();
   const { data, isLoading } = useGetBoardCount();
 
   if (isLoading) {
@@ -30,6 +39,27 @@ export const DashboardClient = () => {
   if (data?.id !== null) {
     router.push(`/board/${data?.id}`);
     return null;
+  }
+
+  if (isMobile) {
+    return (
+      <AlertDialog
+        open={isMobile}
+        onOpenChange={() => (!isMobile ? true : false)}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Mobile Device Detected</AlertDialogTitle>
+            <AlertDialogDescription>
+              For the best experience, please use a desktop device to access
+              this web application. While basic functionality is available on
+              mobile, certain features may be limited or not optimized for
+              smaller screens.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+    );
   }
 
   return null;

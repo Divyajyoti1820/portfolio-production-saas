@@ -9,9 +9,9 @@ interface Props {
 
 const BoardPageLayout = ({ children }: Props) => {
   return (
-    <SidebarProvider className="h-full">
+    <SidebarProvider className="max-h-screen">
       <MainSidebar />
-      <main className="h-full w-full flex items-center justify-center">
+      <main className="max-h-screen w-full flex items-center justify-center">
         {children}
       </main>
     </SidebarProvider>
