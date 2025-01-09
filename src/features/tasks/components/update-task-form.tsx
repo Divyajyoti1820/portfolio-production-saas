@@ -48,11 +48,8 @@ type Props = {
     updatedAt: string | null;
   };
   columns: {
-    boardId: string;
     title: string;
     id: string;
-    createdAt: string;
-    updatedAt: string | null;
   }[];
   boardId: string;
 };
