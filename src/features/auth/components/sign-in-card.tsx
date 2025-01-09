@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
-import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 
 import { signIn } from "next-auth/react";
@@ -20,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 
 export const SignInCard = () => {
   const params = useSearchParams();
@@ -31,7 +31,9 @@ export const SignInCard = () => {
 
   /* OAuth SignIn Handler */
   const OAuthSignInHandler = () => {
-    signIn("github", { redirectTo: "/" });
+    signIn("github", { redirectTo: "/" }).catch(() => {
+      toast.error("Something went wrong");
+    });
   };
   /* OAuth SignIn Handler */
 
@@ -42,6 +44,8 @@ export const SignInCard = () => {
       email: email,
       password: password,
       redirectTo: "/",
+    }).catch(() => {
+      toast.error(error || "Something went wrong");
     });
   };
   /* Credentials SignIn Handler */
@@ -65,16 +69,7 @@ export const SignInCard = () => {
             Test@1234TE
           </span>
         </div>
-        {!!error && (
-          <div className="w-full flex items-center justify-center gap-x-2 p-2 bg-destructive text-sm text-white rounded-sm ">
-            <AlertTriangleIcon className="size-4" />
-            <p>
-              {error === "CredentialsSignin"
-                ? "Invalid Credentials"
-                : "Something went wrong"}
-            </p>
-          </div>
-        )}
+
         <form onSubmit={CredentialsSignInHandler} className="space-y-2.5">
           <Input
             value={email}

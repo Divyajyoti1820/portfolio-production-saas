@@ -36,9 +36,13 @@ export const Hint = ({
           align={align}
           sideOffset={sideOffset}
           alignOffset={alignOffset}
-          className={cn(hide && "hidden", color && `${color}`)}
+          className={cn(hide && "hidden")}
+          style={{ color: color }}
         >
-          <p className={cn("font-semibold capitalize", color && `text-white`)}>
+          <p
+            className={cn("font-bold text-md capitalize")}
+            style={{ color: color ? color : "white" }}
+          >
             {label}
           </p>
         </TooltipContent>

@@ -1,17 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { cn } from "@/lib/utils";
 
-import { AlertCircleIcon, PlusCircleIcon, SidebarIcon } from "lucide-react";
+import { PlusCircleIcon, SidebarIcon } from "lucide-react";
 
-import { Hint } from "@/components/hint";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Hint } from "@/components/custom-components/hint";
 import { SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
 
-import { useGetBoardId } from "@/hooks/use-get-board-id";
-import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { getRandomColor } from "@/features/boards/utils";
 import { useCreateBoardModal } from "@/features/boards/store/use-create-board-modal";
 
@@ -19,60 +15,37 @@ import { MAX_BOARDS } from "@/lib/constants";
 
 type Props = {
   open: boolean;
+  data: {
+    id: string;
+    title: string;
+  }[];
+  currentBoardId: string;
+  isAuthenticated: boolean;
 };
 
-export const MainContent = ({ open }: Props) => {
+export const MainContent = ({
+  open,
+  data,
+  currentBoardId,
+  isAuthenticated,
+}: Props) => {
   const router = useRouter();
-  const session = useSession();
-  const boardId = useGetBoardId();
-  const [createBoardModal, setCreateBoardModal] = useCreateBoardModal();
-
-  const {
-    data: Boards,
-    isLoading: BoardsLoading,
-    isError: BoardsError,
-  } = useGetBoards();
-
-  if (BoardsLoading) {
-    return (
-      <SidebarMenu className="p-2 h-full flex items-center">
-        {[...Array(5)].map((_, i) => (
-          <Skeleton
-            key={i}
-            className={cn("bg-black w-full h-10", !open && "size-10")}
-          />
-        ))}
-      </SidebarMenu>
-    );
-  }
-
-  if (BoardsError || !Boards) {
-    return (
-      <SidebarMenu className="h-full flex flex-col items-center justify-center">
-        <AlertCircleIcon className="size-8 text-destructive" />
-        {open && (
-          <p className="font-semibold text-destructive">Something went wrong</p>
-        )}
-      </SidebarMenu>
-    );
-  }
+  const { setIsOpen } = useCreateBoardModal();
 
   const onClickHandler = (id: string) => {
     router.push(`/board/${id}`);
   };
 
   const createBoardModalHandler = () => {
-    if (!session || session.status === "unauthenticated") {
+    if (!isAuthenticated) {
       return;
     }
 
-    setCreateBoardModal(!createBoardModal);
+    setIsOpen(true);
   };
   return (
     <SidebarMenu className="h-full p-2 flex flex-col gap-y-2 items-center">
-      {Boards.map((board) => {
-        const color = getRandomColor();
-
+      {data.map((board) => {
         return (
           <Hint
             key={board.id}
@@ -80,20 +53,24 @@ export const MainContent = ({ open }: Props) => {
             hide={open}
             align="center"
             side="right"
-            color={color}
+            color={getRandomColor(board.id)}
           >
             <SidebarMenuItem
               key={board.id}
               onClick={() => onClickHandler(board.id)}
               className={cn(
-                `bg-black p-1 w-full flex items-center justify-center rounded-sm  text-primary cursor-pointer transition`,
-                boardId === board.id && `${color} text-white`
+                `bg-black p-1 w-full flex items-center justify-center rounded-sm  text-primary cursor-pointer transition`
               )}
+              style={{
+                backgroundColor:
+                  currentBoardId === board.id ? getRandomColor(board.id) : "",
+                color: currentBoardId === board.id ? "white" : "#6157FF",
+              }}
             >
               <SidebarIcon className="size-6" />
               <p
                 className={cn(
-                  "flex-1 text-center text-sm font-semibold",
+                  "flex-1 text-center text-[12px] font-semibold truncate",
                   !open && "hidden"
                 )}
               >
@@ -105,16 +82,16 @@ export const MainContent = ({ open }: Props) => {
       })}
       <Hint hide={open} label="Add New Board" align="center" side="right">
         <button
-          disabled={Boards.length === MAX_BOARDS}
+          disabled={data.length === MAX_BOARDS}
           onClick={createBoardModalHandler}
           className={cn(
-            "flex w-full items-center justify-center p-2 mt-3 text-blue-500 bg-black rounded-xl hover:bg-black/50 transition"
+            "flex w-full items-center justify-center p-2 mt-3 text-blue-500 bg-black rounded-md hover:bg-black/50 transition"
           )}
         >
-          <PlusCircleIcon className="size-6" />
+          <PlusCircleIcon className="size-4" />
           <p
             className={cn(
-              "flex-1 text-center text-sm font-semibold",
+              "flex-1 text-center text-[12px] font-semibold",
               !open && "hidden"
             )}
           >

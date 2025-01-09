@@ -146,6 +146,7 @@ export const tasks = pgTable("tasks", {
     .$type<Array<{ title: string; isCompleted: boolean }>>()
     .notNull()
     .default([{ title: "subtask-1", isCompleted: false }]),
+  position: integer("position").notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp(),
 });

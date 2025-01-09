@@ -1,6 +1,6 @@
 "use client";
 
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useMediaQuery } from "usehooks-ts";
 
 import {
@@ -10,56 +10,51 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Hint } from "@/components/hint";
+import { Hint } from "@/components/custom-components/hint";
 import { Skeleton } from "@/components/ui/skeleton";
 
-import { useGetBoardId } from "@/hooks/use-get-board-id";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 
-import { useGetBoard } from "@/features/boards/api/use-get-board";
-import { useGetBoards } from "@/features/boards/api/use-get-boards";
 import { useDeleteBoard } from "@/features/boards/api/use-delete-board";
 import { useUpdateBoardModal } from "@/features/boards/store/use-update-board-modal";
 import { useCreateTaskModal } from "@/features/tasks/store/use-create-task-modal";
+import { Fragment } from "react";
 
-export const Navbar = () => {
+type Props = {
+  board: { title: string; id: string };
+  boardsInfo: { count: number; id: string | null };
+  boardLoadingStatus: boolean;
+};
+
+export const Navbar = ({ board, boardsInfo, boardLoadingStatus }: Props) => {
   const router = useRouter();
   const isBreakpoint = useMediaQuery("(max-width:1080px)");
-  const boardId = useGetBoardId();
-  const [openCreateTaskModal, setOpenCreateTaskModal] = useCreateTaskModal();
+  const { open: setIsOpenCreateTaskModal } = useCreateTaskModal();
 
-  const { data: Boards } = useGetBoards();
-  const [openBoardUpdateModal, setOpenBoardUpdateModal] = useUpdateBoardModal();
+  const { open } = useUpdateBoardModal();
+
+  const boardDeleteMutation = useDeleteBoard();
   const [ConfirmationModal, confirm] = useConfirmModal({
-    title: "Are you sure?",
+    title: "Are you sure want to delete board?",
     message:
       "Your are going to delete this board. This action is irreversible.",
   });
-
-  const {
-    data: BoardData,
-    isLoading: loadingBoard,
-    isError: boardError,
-  } = useGetBoard(boardId);
-
-  const boardDeleteMutation = useDeleteBoard(boardId);
-
   const deleteBoardHandler = async () => {
-    if (!Boards) return;
+    if (!board) return;
 
     const ok = await confirm();
 
     if (!ok) return;
 
     boardDeleteMutation.mutate(
-      { id: boardId },
+      { id: board.id },
       {
         onSuccess: () => {
           toast.success("Board removed successfully");
-          if (Boards.length !== 0) {
-            router.replace(`/board/${Boards[0].id}`);
+          if (boardsInfo.count !== 0) {
+            router.replace(`/board/${boardsInfo.id}`);
           } else {
-            redirect("/");
+            router.replace("/create");
           }
         },
         onError: () => {
@@ -70,23 +65,23 @@ export const Navbar = () => {
   };
 
   return (
-    <>
+    <Fragment>
       <ConfirmationModal />
       <nav className="bg-card h-14 w-full px-3 flex items-center justify-between">
         <div className="h-full flex items-center justify-center">
-          {loadingBoard ? (
+          {boardLoadingStatus ? (
             <Skeleton className="h-6 w-40 rounded-sm" />
           ) : (
-            <>
-              {boardError ? (
+            <Fragment>
+              {!board ? (
                 <div className="h-8 w-40 flex items-center justify-center rounded-sm gap-x-2 bg-black">
                   <AlertTriangleIcon className="size-4 text-destructive" />
                   <p className="text-xs text-destructive">Board Error</p>
                 </div>
               ) : (
-                <h3 className="text-lg font-semibold">{BoardData?.title}</h3>
+                <h3 className="text-lg font-semibold">{board.title}</h3>
               )}
-            </>
+            </Fragment>
           )}
         </div>
         <div className="flex flex-row items-center justify-center gap-x-2">
@@ -97,8 +92,8 @@ export const Navbar = () => {
             side="bottom"
           >
             <button
-              disabled={boardError}
-              onClick={() => setOpenCreateTaskModal(!openCreateTaskModal)}
+              disabled={boardLoadingStatus}
+              onClick={() => setIsOpenCreateTaskModal(board.id)}
               className="flex items-center justify-center gap-x-1 bg-teal-500 p-1 rounded-md hover:bg-teal-500/50 transition"
             >
               <PlusSquareIcon className="size-5" />
@@ -109,8 +104,8 @@ export const Navbar = () => {
           </Hint>
           <Hint label="Edit Board" align="center" side="bottom">
             <button
-              onClick={() => setOpenBoardUpdateModal(!openBoardUpdateModal)}
-              disabled={boardError}
+              onClick={() => open(board.id)}
+              disabled={boardLoadingStatus}
               className="flex items-center justify-center gap-x-1 bg-primary p-1 rounded-md hover:bg-primary/50 transition"
             >
               <Edit2Icon className="size-5" />
@@ -118,7 +113,7 @@ export const Navbar = () => {
           </Hint>
           <Hint label="Delete Board" align="center" side="bottom">
             <button
-              disabled={boardError}
+              disabled={boardLoadingStatus}
               onClick={deleteBoardHandler}
               className="flex items-center justify-center gap-x-1 bg-destructive p-1 rounded-md hover:bg-destructive/50 transition"
             >
@@ -127,6 +122,6 @@ export const Navbar = () => {
           </Hint>
         </div>
       </nav>
-    </>
+    </Fragment>
   );
 };

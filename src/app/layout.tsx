@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { SessionProvider } from "next-auth/react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import { Toaster } from "@/components/ui/sonner";
 import { auth } from "@/auth";
@@ -33,14 +33,15 @@ export default async function RootLayout({
     <SessionProvider session={session}>
       <html lang="en">
         <body className={font.className}>
-          <QueryProvider>
-            <JotaiProvider>
-              <ModalsProvider />
-              <Toaster />
-              {children}
-            </JotaiProvider>
-            <ReactQueryDevtools initialIsOpen={false} />
-          </QueryProvider>
+          <NuqsAdapter>
+            <QueryProvider>
+              <JotaiProvider>
+                <ModalsProvider />
+                <Toaster />
+                {children}
+              </JotaiProvider>
+            </QueryProvider>
+          </NuqsAdapter>
         </body>
       </html>
     </SessionProvider>

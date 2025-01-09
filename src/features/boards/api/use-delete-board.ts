@@ -12,12 +12,12 @@ type ResponseType = InferResponseType<
   200
 >;
 
-export const useDeleteBoard = (id: string) => {
+export const useDeleteBoard = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async () => {
+    mutationFn: async (param) => {
       const response = await client.api.boards[":id"].$delete({
-        param: { id },
+        param,
       });
 
       if (!response.ok) {

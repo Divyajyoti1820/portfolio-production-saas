@@ -1,21 +1,23 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 import { InferRequestType, InferResponseType } from "hono";
+import { useGetBoardId } from "@/hooks/use-get-board-id";
 
 type RequestType = InferRequestType<
   (typeof client.api.tasks)[":boardId"]["$post"]
->["json"];
+>;
 type ResponseType = InferResponseType<
   (typeof client.api.tasks)[":boardId"]["$post"],
   200
 >;
 
-export const useCreateTask = (boardId: string, columnId: string) => {
+export const useCreateTask = () => {
+  const boardId = useGetBoardId();
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.tasks[":boardId"].$post({
-        param: { boardId },
+        param,
         json,
       });
 
@@ -27,7 +29,7 @@ export const useCreateTask = (boardId: string, columnId: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", { boardId, columnId }],
+        queryKey: ["columns-with-tasks", { boardId }],
       });
     },
   });

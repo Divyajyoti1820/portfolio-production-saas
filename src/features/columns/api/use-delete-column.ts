@@ -5,21 +5,19 @@ import { InferResponseType, InferRequestType } from "hono";
 
 type RequestType = InferRequestType<
   (typeof client.api.columns)[":id"]["$delete"]
->["json"];
+>;
 
 type ResponseType = InferResponseType<
   (typeof client.api.columns)[":id"]["$delete"],
   200
 >;
 
-export const useDeleteColumn = (id: string, boardId: string) => {
+export const useDeleteColumn = () => {
   const queryClient = useQueryClient();
   const mutation = useMutation<ResponseType, Error, RequestType>({
-    mutationKey: [!!id],
-
-    mutationFn: async (json) => {
+    mutationFn: async ({ param, json }) => {
       const response = await client.api.columns[":id"].$delete({
-        param: { id },
+        param,
         json,
       });
 
@@ -29,9 +27,12 @@ export const useDeleteColumn = (id: string, boardId: string) => {
 
       return await response.json();
     },
-    onSuccess: () => {
+    onSuccess: ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
-      queryClient.invalidateQueries({ queryKey: ["columns", { boardId }] });
+      queryClient.invalidateQueries({
+        queryKey: ["columns-with-tasks", { boardId: data.boardId }],
+      });
+      queryClient.invalidateQueries({ queryKey: ["columns", data.boardId] });
     },
   });
 

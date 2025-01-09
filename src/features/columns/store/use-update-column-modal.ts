@@ -1,7 +1,15 @@
-import { atom, useAtom } from "jotai";
-
-const modalState = atom(false);
+import { useQueryState, parseAsString } from "nuqs";
 
 export const useUpdateColumnModal = () => {
-  return useAtom(modalState);
+  const [id, setId] = useQueryState("update-column", parseAsString);
+
+  const open = (id: string) => setId(id);
+  const close = () => setId(null);
+
+  return {
+    id,
+    open,
+    close,
+    setId,
+  };
 };

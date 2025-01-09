@@ -5,7 +5,7 @@ import { verifyAuth } from "@hono/auth-js";
 import { zValidator } from "@hono/zod-validator";
 
 import { db } from "@/db";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, asc, count } from "drizzle-orm";
 import { boards, columns } from "@/db/schema";
 
 const app = new Hono()
@@ -52,7 +52,7 @@ const app = new Hono()
       return c.json({ data: data[0] });
     }
   )
-  .get("/boards-list", verifyAuth(), async (c) => {
+  .get("/boards", verifyAuth(), async (c) => {
     const auth = c.get("authUser");
     if (!auth.token?.id) {
       return c.json({ error: "Un-Authorized Access" }, 401);
@@ -76,10 +76,10 @@ const app = new Hono()
     return c.json({ data: data });
   })
   .get(
-    "/:id",
+    "/",
     verifyAuth(),
     zValidator(
-      "param",
+      "query",
       z.object({
         id: z.string(),
       })
@@ -90,7 +90,7 @@ const app = new Hono()
         return c.json({ error: "Un-Authorized Access" }, 401);
       }
 
-      const { id } = c.req.valid("param");
+      const { id } = c.req.valid("query");
 
       const data = await db
         .select()
@@ -140,7 +140,7 @@ const app = new Hono()
     "/:id",
     verifyAuth(),
     zValidator("param", z.object({ id: z.string() })),
-    zValidator("json", z.object({ title: z.string().min(3).max(25) })),
+    zValidator("json", z.object({ title: z.string().min(3).max(126) })),
     async (c) => {
       const auth = c.get("authUser");
       if (!auth.token?.id) {
@@ -165,8 +165,59 @@ const app = new Hono()
         );
       }
 
-      return c.json({ data: id });
+      return c.json({ data: { id: id } });
     }
-  );
+  )
+  .get("/boards-count", verifyAuth(), async (c) => {
+    const auth = c.get("authUser");
+    if (!auth.token?.id) {
+      return c.json({ error: "Un-Authorized Access" }, 401);
+    }
+
+    const boardsByUser = await db
+      .select()
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id))
+      .orderBy(asc(boards.createdAt));
+
+    if (!boardsByUser) {
+      return c.json({ error: "[BOARDS_GET] : Failed to get boards" }, 400);
+    }
+
+    if (boardsByUser.length === 0) {
+      return c.json({ data: { count: 0, id: null } });
+    }
+
+    const data = await db
+      .select({ count: count() })
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id));
+
+    const boardId = await db
+      .select({ id: boards.id })
+      .from(boards)
+      .where(eq(boards.userId, auth.token.id))
+      .limit(1);
+
+    if (!data && !boardId) {
+      return c.json(
+        {
+          error: "[BOARDS_GET] : Failed to get boards",
+        },
+        400
+      );
+    }
+
+    if (data[0].count === 0 && boardId[0].id === null) {
+      return c.json({ data: { count: 0, id: null } });
+    }
+
+    return c.json({
+      data: {
+        count: data[0].count,
+        id: boardId[0].id,
+      },
+    });
+  });
 
 export default app;

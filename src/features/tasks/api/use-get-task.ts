@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { client } from "@/lib/hono";
 
-export const useGetTask = (
-  boardId: string,
-  columnId: string,
-  taskId: string
-) => {
+type Props = {
+  boardId: string;
+  columnId: string;
+  taskId: string;
+};
+
+export const useGetTask = ({ boardId, columnId, taskId }: Props) => {
   const query = useQuery({
-    queryKey: ["task", { taskId }],
+    queryKey: ["task", taskId],
 
     queryFn: async () => {
       const response = await client.api.tasks[":boardId"][":columnId"][

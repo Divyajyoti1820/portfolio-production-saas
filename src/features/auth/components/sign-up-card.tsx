@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
 
-import { AlertTriangleIcon } from "lucide-react";
 import { FaGithub } from "react-icons/fa6";
 
 import { signIn } from "next-auth/react";
@@ -35,7 +34,9 @@ export const SignUpCard = () => {
 
   /* OAuth SignUp Handler */
   const OAuthSignUpHandler = () => {
-    signIn("github", { redirectTo: "/" });
+    signIn("github", { redirectTo: "/" }).catch(() => {
+      toast.error("Something went wrong");
+    });
   };
   /* OAuth SignUp Handler */
 
@@ -58,7 +59,7 @@ export const SignUpCard = () => {
           toast.success("User Registered successfully");
         },
         onError: () => {
-          toast.error("Something went wrong");
+          toast.error(error || "Something went wrong");
         },
       }
     );
@@ -79,12 +80,6 @@ export const SignUpCard = () => {
             To try the project go to login page and use test credentials.
           </p>
         </div>
-        {!!error && (
-          <div className="w-full p-2 bg-destructive text-sm text-white ">
-            <AlertTriangleIcon className="size-4" />
-            <p>Something went wrong</p>
-          </div>
-        )}
         <form onSubmit={CredentialsSignUpHandler} className="space-y-2.5">
           <Input
             value={name}

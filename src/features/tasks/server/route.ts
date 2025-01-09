@@ -54,6 +54,17 @@ const app = new Hono()
         return c.json({ error: "[TASKS_CREATE] : Column not found" }, 400);
       }
 
+      const highestPositionTask = await db
+        .select()
+        .from(tasks)
+        .orderBy(desc(tasks.position))
+        .limit(1);
+
+      const newPosition =
+        highestPositionTask.length > 0
+          ? highestPositionTask[0].position + 1
+          : 1;
+
       const data = await db
         .insert(tasks)
         .values({
@@ -61,6 +72,7 @@ const app = new Hono()
           description,
           columnId,
           subtasks,
+          position: newPosition,
         })
         .returning();
 
@@ -111,7 +123,7 @@ const app = new Hono()
         .select()
         .from(tasks)
         .where(eq(tasks.columnId, columnId))
-        .orderBy(desc(tasks.createdAt));
+        .orderBy(desc(tasks.position));
 
       if (!data) {
         return c.json({ error: "[TASKS_GET] : Failed to get tasks" }, 400);
@@ -206,7 +218,7 @@ const app = new Hono()
         return c.json({ error: "[TASK_GET] : Task not found" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .patch(
@@ -277,6 +289,7 @@ const app = new Hono()
           description,
           columnId: newColumnId,
           subtasks,
+          updatedAt: new Date(),
         })
         .where(eq(tasks.id, id))
         .returning();
@@ -285,7 +298,7 @@ const app = new Hono()
         return c.json({ error: "Failed to update board" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .patch(
@@ -341,6 +354,7 @@ const app = new Hono()
         .update(tasks)
         .set({
           subtasks,
+          updatedAt: new Date(),
         })
         .where(eq(tasks.id, id))
         .returning();
@@ -349,7 +363,7 @@ const app = new Hono()
         return c.json({ error: "[TASK_UPDATE] : Failed to update task" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
     }
   )
   .post(
@@ -392,6 +406,17 @@ const app = new Hono()
 
       const { title, description, columnId: copyColumnId, subtasks } = task[0];
 
+      const highestPositionTask = await db
+        .select()
+        .from(tasks)
+        .orderBy(desc(tasks.position))
+        .limit(1);
+
+      const newPosition =
+        highestPositionTask.length > 0
+          ? highestPositionTask[0].position + 1
+          : 1;
+
       const data = await db
         .insert(tasks)
         .values({
@@ -399,6 +424,7 @@ const app = new Hono()
           description,
           columnId: copyColumnId,
           subtasks,
+          position: newPosition,
         })
         .returning();
 
@@ -406,7 +432,66 @@ const app = new Hono()
         return c.json({ error: "[TASK_COPY] : Failed to copy data" }, 400);
       }
 
-      return c.json({ data: data[0].id });
+      return c.json({ data: data[0] });
+    }
+  )
+  .patch(
+    "/bulk-update-tasks",
+    verifyAuth(),
+    zValidator(
+      "json",
+      z.object({
+        boardId: z.string(),
+        tasks: z.array(
+          z.object({
+            id: z.string(),
+            columnId: z.string(),
+            position: z.number().min(0).max(10),
+          })
+        ),
+      })
+    ),
+    async (c) => {
+      const auth = c.get("authUser");
+      if (!auth.token?.id) {
+        return c.json({ error: "Un-Authorized Access" }, 401);
+      }
+
+      const { boardId, tasks: updatedTasks } = c.req.valid("json");
+
+      if (!boardId || !updatedTasks) {
+        return c.json({ error: "Missing required fields" }, 400);
+      }
+
+      const board = await db
+        .select({ id: boards.id })
+        .from(boards)
+        .where(and(eq(boards.id, boardId), eq(boards.userId, auth.token.id)));
+      if (!board || board.length === 0) {
+        return c.json({ error: "Board not found" }, 400);
+      }
+
+      const updateTasks = await Promise.all(
+        updatedTasks.map(async (task) => {
+          const { id, columnId, position } = task;
+          const data = await db
+            .update(tasks)
+            .set({
+              columnId,
+              position,
+            })
+            .where(eq(tasks.id, id))
+            .returning({ id: tasks.id });
+
+          return data[0];
+        })
+      );
+
+      if (!updateTasks || updateTasks.length === 0) {
+        return c.json("Failed to update tasks", 400);
+      }
+
+      return c.json({ data: updateTasks });
     }
   );
 

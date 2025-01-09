@@ -1,7 +1,13 @@
-import { atom, useAtom } from "jotai";
-
-const modalState = atom<string | undefined>(undefined);
+import { useQueryState, parseAsString } from "nuqs";
 
 export const useGetTaskId = () => {
-  return useAtom(modalState);
+  const [id, setId] = useQueryState(
+    "taskId",
+    parseAsString.withDefault("").withOptions({ clearOnDefault: true })
+  );
+
+  return {
+    id,
+    setId,
+  };
 };

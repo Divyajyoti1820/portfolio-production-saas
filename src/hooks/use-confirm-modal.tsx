@@ -10,7 +10,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { AlertTriangleIcon } from "lucide-react";
 
 type Props = {
   title: string;
@@ -50,7 +49,6 @@ export const useConfirmModal = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex flex-col gap-y-3">
-            <AlertTriangleIcon className="size-10 text-red-600" />
             {title}
           </AlertDialogTitle>
           <AlertDialogDescription>{message}</AlertDialogDescription>

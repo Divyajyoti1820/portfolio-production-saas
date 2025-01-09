@@ -1,7 +1,15 @@
-import { useAtom, atom } from "jotai";
-
-const modalState = atom(false);
+import { useQueryState, parseAsString } from "nuqs";
 
 export const useUpdateBoardModal = () => {
-  return useAtom(modalState);
+  const [id, setId] = useQueryState("update-board", parseAsString);
+
+  const open = (id: string) => setId(id);
+  const close = () => setId(null);
+
+  return {
+    id,
+    open,
+    close,
+    setId,
+  };
 };
