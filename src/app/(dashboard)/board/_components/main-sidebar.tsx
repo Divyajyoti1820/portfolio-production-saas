@@ -43,7 +43,7 @@ export const MainSidebar = () => {
   }
 
   return (
-    <Sidebar collapsible="icon" className="flex items-center">
+    <Sidebar collapsible="icon" className="flex h-full items-center">
       <SidebarHeader className="border-b-2 border-blue-500 flex flex-row items-center justify-center">
         <div
           onClick={() => router.push("/")}

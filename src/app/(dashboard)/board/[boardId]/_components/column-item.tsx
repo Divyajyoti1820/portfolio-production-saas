@@ -5,10 +5,8 @@ import { useDeleteColumn } from "@/features/columns/api/use-delete-column";
 import { toast } from "sonner";
 import { useConfirmModal } from "@/hooks/use-confirm-modal";
 import { useUpdateColumnModal } from "@/features/columns/store/use-update-column-modal";
-import { ScrollBar } from "@/components/ui/scroll-area";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
 import { ColumnWithTasks } from "@/features/columns/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type Props = {
   data: ColumnWithTasks;
@@ -44,7 +42,7 @@ export const ColumnItem = ({ data, loadingStatus }: Props) => {
   const { open: setOpenColumnUpdateModal } = useUpdateColumnModal();
 
   return (
-    <div className="w-[260px] h-full  rounded-md">
+    <div className="w-[260px] h-[calc(100vh-3.5rem)]  rounded-md">
       <ConfirmationDialog />
       <div className="w-full px-1.5 h-10 flex items-center justify-between rounded-md mb-4">
         <p className="text-md text-purple-500 font-bold truncate">
@@ -67,24 +65,18 @@ export const ColumnItem = ({ data, loadingStatus }: Props) => {
       </div>
 
       {loadingStatus && (
-        <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
-          <div className="h-full w-[260px] flex flex-col gap-y-3 items-start justify-start">
-            {[...Array(4)].map((_, i) => (
-              <Skeleton key={i} className="w-[260px] h-full bg-black/40" />
-            ))}
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
+        <div className="h-[calc(100%-3.5rem)] w-[260px] flex flex-col gap-y-3 items-start justify-start">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="w-[260px] h-full bg-black/40" />
+          ))}
+        </div>
       )}
 
       {!loadingStatus && !data && (
-        <ScrollArea className="w-[260px] h-[calc(100%-56px)] rounded-md">
-          <div className="h-full w-[260px] flex flex-col gap-y-3 items-center justify-center bg-black/20">
-            <AlertOctagonIcon className="text-destructive" />
-            <p className="text-destructive text-sm">Something went wrong</p>
-          </div>
-          <ScrollBar orientation="vertical" />
-        </ScrollArea>
+        <div className="h-[calc(100%-3.5rem)] w-[260px] flex flex-col gap-y-3 items-center justify-center bg-black/20">
+          <AlertOctagonIcon className="text-destructive" />
+          <p className="text-destructive text-sm">Something went wrong</p>
+        </div>
       )}
 
       {data && <TaskList data={data} />}
