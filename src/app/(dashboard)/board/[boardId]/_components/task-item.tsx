@@ -8,10 +8,7 @@ import { useRemoveTask } from "@/features/tasks/api/use-remove-task";
 import { useUpdateTaskModal } from "@/features/tasks/store/use-update-task-modal";
 import { useShowTaskModal } from "@/features/tasks/store/use-show-task-modal";
 
-import {
-  GetRandomBorderColor,
-  CapitalizeFirstLetter,
-} from "@/features/tasks/utils";
+import { CapitalizeFirstLetter, getTaskColor } from "@/features/tasks/utils";
 
 import { CopyIcon, EditIcon, TrashIcon } from "lucide-react";
 
@@ -90,8 +87,6 @@ export const TaskItem = ({ data, boardId, index }: Props) => {
   ).length;
   /* No. of completed Subtask */
 
-  const borderColor = GetRandomBorderColor();
-
   return (
     <Draggable draggableId={data.id} index={index}>
       {(provided) => (
@@ -100,9 +95,9 @@ export const TaskItem = ({ data, boardId, index }: Props) => {
           {...provided.draggableProps}
           {...provided.dragHandleProps}
           className={cn(
-            "w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-2",
-            borderColor
+            "w-full h-32 flex flex-row items-center justify-start rounded-md  bg-black/40  border-b-2"
           )}
+          style={{ borderBottomColor: getTaskColor(data.position) }}
         >
           <ConfirmationDialog />
           <div

@@ -46,8 +46,6 @@ export const MainContent = ({
   return (
     <SidebarMenu className="h-full p-2 flex flex-col gap-y-2 items-center">
       {data.map((board) => {
-        const color = getRandomColor();
-
         return (
           <Hint
             key={board.id}
@@ -55,20 +53,24 @@ export const MainContent = ({
             hide={open}
             align="center"
             side="right"
-            color={color}
+            color={getRandomColor(board.id)}
           >
             <SidebarMenuItem
               key={board.id}
               onClick={() => onClickHandler(board.id)}
               className={cn(
-                `bg-black p-1 w-full flex items-center justify-center rounded-sm  text-primary cursor-pointer transition`,
-                currentBoardId === board.id && `${color} text-white`
+                `bg-black p-1 w-full flex items-center justify-center rounded-sm  text-primary cursor-pointer transition`
               )}
+              style={{
+                backgroundColor:
+                  currentBoardId === board.id ? getRandomColor(board.id) : "",
+                color: currentBoardId === board.id ? "white" : "#6157FF",
+              }}
             >
               <SidebarIcon className="size-6" />
               <p
                 className={cn(
-                  "flex-1 text-center text-sm font-semibold",
+                  "flex-1 text-center text-[12px] font-semibold truncate",
                   !open && "hidden"
                 )}
               >
@@ -83,13 +85,13 @@ export const MainContent = ({
           disabled={data.length === MAX_BOARDS}
           onClick={createBoardModalHandler}
           className={cn(
-            "flex w-full items-center justify-center p-2 mt-3 text-blue-500 bg-black rounded-xl hover:bg-black/50 transition"
+            "flex w-full items-center justify-center p-2 mt-3 text-blue-500 bg-black rounded-md hover:bg-black/50 transition"
           )}
         >
-          <PlusCircleIcon className="size-6" />
+          <PlusCircleIcon className="size-4" />
           <p
             className={cn(
-              "flex-1 text-center text-sm font-semibold",
+              "flex-1 text-center text-[12px] font-semibold",
               !open && "hidden"
             )}
           >

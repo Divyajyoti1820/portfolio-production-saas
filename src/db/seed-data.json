@@ -1,0 +1,190 @@
+{
+  "user": {
+    "name": "John Doe",
+    "email": "john@example.com",
+    "password": "dummy-password"
+  },
+  "board": {
+    "title": "Website Development Project",
+    "columns": [
+      {
+        "title": "Backlog",
+        "tasks": [
+          {
+            "title": "User Authentication System",
+            "description": "Implement secure user authentication with multiple providers including email/password and social logins",
+            "position": 0,
+            "subtasks": [
+              { "title": "Setup OAuth providers", "isCompleted": false },
+              { "title": "Create login/register forms", "isCompleted": false },
+              { "title": "Implement password reset flow", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Database Schema Design",
+            "description": "Design and implement the initial database schema for core features",
+            "position": 1,
+            "subtasks": [
+              { "title": "Define user model", "isCompleted": false },
+              { "title": "Create entity relationships", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "API Documentation",
+            "description": "Create comprehensive API documentation for all endpoints",
+            "position": 2,
+            "subtasks": [
+              {
+                "title": "Document authentication endpoints",
+                "isCompleted": false
+              },
+              { "title": "Create API usage examples", "isCompleted": false },
+              {
+                "title": "Write error handling documentation",
+                "isCompleted": false
+              }
+            ]
+          },
+          {
+            "title": "Security Audit Planning",
+            "description": "Plan and prepare for the initial security audit of the application",
+            "position": 3,
+            "subtasks": [
+              { "title": "Create security checklist", "isCompleted": false },
+              { "title": "Review authentication methods", "isCompleted": false }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "In Progress",
+        "tasks": [
+          {
+            "title": "Frontend Development",
+            "description": "Develop the main user interface components using React and Tailwind",
+            "position": 0,
+            "subtasks": [
+              { "title": "Create component library", "isCompleted": true },
+              { "title": "Implement responsive design", "isCompleted": false },
+              { "title": "Add dark mode support", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Backend API Development",
+            "description": "Build RESTful API endpoints for core functionality",
+            "position": 1,
+            "subtasks": [
+              { "title": "Implement CRUD operations", "isCompleted": true },
+              { "title": "Add request validation", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Database Integration",
+            "description": "Integrate PostgreSQL database with the application",
+            "position": 2,
+            "subtasks": [
+              { "title": "Setup database connection", "isCompleted": true },
+              { "title": "Implement data models", "isCompleted": true },
+              { "title": "Create database migrations", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Testing Setup",
+            "description": "Set up testing infrastructure and write initial tests",
+            "position": 3,
+            "subtasks": [
+              { "title": "Configure Jest", "isCompleted": true },
+              { "title": "Write unit tests", "isCompleted": false }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Review",
+        "tasks": [
+          {
+            "title": "Code Review: Authentication",
+            "description": "Review and approve authentication implementation",
+            "position": 0,
+            "subtasks": [
+              { "title": "Review security measures", "isCompleted": true },
+              { "title": "Check error handling", "isCompleted": true },
+              { "title": "Verify JWT implementation", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "UI/UX Review",
+            "description": "Complete design review for all implemented components",
+            "position": 1,
+            "subtasks": [
+              { "title": "Check accessibility", "isCompleted": true },
+              { "title": "Verify responsive design", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Performance Testing",
+            "description": "Conduct performance testing on critical features",
+            "position": 2,
+            "subtasks": [
+              { "title": "Run load tests", "isCompleted": true },
+              { "title": "Optimize database queries", "isCompleted": false },
+              { "title": "Profile API endpoints", "isCompleted": false }
+            ]
+          },
+          {
+            "title": "Documentation Review",
+            "description": "Review and update all technical documentation",
+            "position": 3,
+            "subtasks": [
+              { "title": "Review API docs", "isCompleted": true },
+              { "title": "Update setup instructions", "isCompleted": false }
+            ]
+          }
+        ]
+      },
+      {
+        "title": "Done",
+        "tasks": [
+          {
+            "title": "Project Setup",
+            "description": "Initialize project repository and setup development environment",
+            "position": 0,
+            "subtasks": [
+              { "title": "Create Git repository", "isCompleted": true },
+              { "title": "Setup development environment", "isCompleted": true }
+            ]
+          },
+          {
+            "title": "Design System Implementation",
+            "description": "Create and implement the design system components",
+            "position": 1,
+            "subtasks": [
+              { "title": "Define color palette", "isCompleted": true },
+              { "title": "Create component library", "isCompleted": true },
+              { "title": "Document usage guidelines", "isCompleted": true }
+            ]
+          },
+          {
+            "title": "CI/CD Pipeline",
+            "description": "Set up continuous integration and deployment pipeline",
+            "position": 2,
+            "subtasks": [
+              { "title": "Configure GitHub Actions", "isCompleted": true },
+              { "title": "Setup automated testing", "isCompleted": true }
+            ]
+          },
+          {
+            "title": "Development Environment",
+            "description": "Setup and document development environment configuration",
+            "position": 3,
+            "subtasks": [
+              { "title": "Configure ESLint and Prettier", "isCompleted": true },
+              { "title": "Setup Docker environment", "isCompleted": true },
+              { "title": "Create development scripts", "isCompleted": true }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

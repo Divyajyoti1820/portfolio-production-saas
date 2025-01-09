@@ -137,7 +137,10 @@ export const MainSidebar = () => {
             )}
           >
             <p
-              className={cn("flex-1 transition", !open && "hidden transition")}
+              className={cn(
+                "flex-1 transition text-[14px]",
+                !open && "hidden transition"
+              )}
             >
               Hide Sidebar
             </p>

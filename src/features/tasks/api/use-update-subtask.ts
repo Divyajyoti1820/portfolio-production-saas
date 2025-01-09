@@ -35,7 +35,7 @@ export const useUpdateSubtask = () => {
     onSuccess: ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["task", data.id] });
       queryClient.invalidateQueries({
-        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+        queryKey: ["columns-with-tasks", { boardId }],
       });
     },
   });

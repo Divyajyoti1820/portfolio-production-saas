@@ -31,7 +31,7 @@ export const UserInfo = ({ open, data }: Props) => {
           <AvatarImage
             src={imageUrl || ""}
             alt={name || "User"}
-            className="size-10 border-2 border-blue-500"
+            className="size-8 border-2 border-blue-500"
           />
           <AvatarFallback>{fallback}</AvatarFallback>
         </Avatar>
@@ -41,7 +41,9 @@ export const UserInfo = ({ open, data }: Props) => {
             !open && "hidden"
           )}
         >
-          <p className="text-sm font-medium text-blue-500">{name}</p>
+          <p className="text-sm font-medium text-[12px] text-blue-500">
+            {name}
+          </p>
           <p className="text-[10px] text-muted-foreground">
             {data.user.email || "No email"}
           </p>

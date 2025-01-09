@@ -34,7 +34,7 @@ export const useRemoveTask = () => {
         queryKey: ["tasks", data.columnId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+        queryKey: ["columns-with-tasks", { boardId }],
       });
     },
   });

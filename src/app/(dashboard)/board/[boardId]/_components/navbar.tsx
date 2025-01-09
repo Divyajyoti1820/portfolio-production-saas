@@ -29,7 +29,7 @@ type Props = {
 export const Navbar = ({ board, boardsInfo, boardLoadingStatus }: Props) => {
   const router = useRouter();
   const isBreakpoint = useMediaQuery("(max-width:1080px)");
-  const { setIsOpen: setIsOpenCreateTaskModal } = useCreateTaskModal();
+  const { open: setIsOpenCreateTaskModal } = useCreateTaskModal();
 
   const { open } = useUpdateBoardModal();
 
@@ -54,7 +54,7 @@ export const Navbar = ({ board, boardsInfo, boardLoadingStatus }: Props) => {
           if (boardsInfo.count !== 0) {
             router.replace(`/board/${boardsInfo.id}`);
           } else {
-            router.push("/create");
+            router.replace("/create");
           }
         },
         onError: () => {
@@ -93,7 +93,7 @@ export const Navbar = ({ board, boardsInfo, boardLoadingStatus }: Props) => {
           >
             <button
               disabled={boardLoadingStatus}
-              onClick={() => setIsOpenCreateTaskModal(true)}
+              onClick={() => setIsOpenCreateTaskModal(board.id)}
               className="flex items-center justify-center gap-x-1 bg-teal-500 p-1 rounded-md hover:bg-teal-500/50 transition"
             >
               <PlusSquareIcon className="size-5" />

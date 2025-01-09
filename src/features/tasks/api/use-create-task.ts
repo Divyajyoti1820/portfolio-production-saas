@@ -27,12 +27,9 @@ export const useCreateTask = () => {
 
       return await response.json();
     },
-    onSuccess: ({ data }) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["tasks", data.columnId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+        queryKey: ["columns-with-tasks", { boardId }],
       });
     },
   });

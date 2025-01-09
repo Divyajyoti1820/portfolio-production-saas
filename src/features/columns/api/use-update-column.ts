@@ -32,7 +32,7 @@ export const useUpdateColumn = () => {
         queryKey: ["column", { boardId: data.boardId, id: data.id }],
       });
       queryClient.invalidateQueries({
-        queryKey: ["column-with-tasks", { boardId: data.boardId }],
+        queryKey: ["columns-with-tasks", { boardId: data.boardId }],
       });
       queryClient.invalidateQueries({ queryKey: ["columns", data.boardId] });
     },

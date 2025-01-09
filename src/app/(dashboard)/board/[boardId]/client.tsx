@@ -36,12 +36,16 @@ export const BoardIdClient = () => {
     );
   }
 
-  if (!boardsInfo || !boardData || !columnWithTaskData) {
+  if (!boardsInfo) {
     return <PageError />;
   }
 
   if (boardsInfo.count === 0) {
     router.push("/create");
+  }
+
+  if (!boardData || !columnWithTaskData) {
+    return <PageError />;
   }
 
   const board = {

@@ -35,7 +35,7 @@ const app = new Hono()
       }
 
       const data = await db
-        .select()
+        .select({ id: columns.id, title: columns.title })
         .from(columns)
         .where(eq(columns.boardId, boardId))
         .orderBy(asc(columns.createdAt));

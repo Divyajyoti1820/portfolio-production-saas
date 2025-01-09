@@ -26,6 +26,9 @@ export const useCreateColumn = () => {
     onSuccess: ({ data }) => {
       queryClient.invalidateQueries({ queryKey: ["boards"] });
       queryClient.invalidateQueries({ queryKey: ["columns", data.boardId] });
+      queryClient.invalidateQueries({
+        queryKey: ["columns-with-tasks", { boardId: data.boardId }],
+      });
     },
   });
 

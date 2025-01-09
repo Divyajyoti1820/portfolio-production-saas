@@ -40,7 +40,7 @@ export const useUpdateTask = ({ prevColumnId }: Props) => {
       queryClient.invalidateQueries({ queryKey: ["tasks", data.columnId] });
       queryClient.invalidateQueries({ queryKey: ["tasks", prevColumnId] });
       queryClient.invalidateQueries({
-        queryKey: ["column-with-tasks", { boardId, columnId: data.columnId }],
+        queryKey: ["columns-with-tasks", { boardId }],
       });
     },
   });

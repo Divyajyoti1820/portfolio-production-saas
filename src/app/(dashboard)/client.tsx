@@ -24,10 +24,12 @@ export const DashboardClient = () => {
 
   if (!isLoading && data?.count === 0 && data?.id === null) {
     router.push("/create");
+    return null;
   }
 
   if (data?.id !== null) {
     router.push(`/board/${data?.id}`);
+    return null;
   }
 
   return null;
