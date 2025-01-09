@@ -3,7 +3,7 @@ interface Props {
 }
 
 const DashboardLayout = ({ children }: Props) => {
-  return <main className="max-h-screen max-w-screen-2xl">{children}</main>;
+  return <main className="h-full w-full">{children}</main>;
 };
 
 export default DashboardLayout;
